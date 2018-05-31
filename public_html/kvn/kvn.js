@@ -485,8 +485,12 @@ var scriptGroup7 = function () {
     /**/var input = $("<input type='file/>").attr('id','bgchange');
     /**/var changebg = jom.g('button',null,'c-bg',"Change Background").attr('type','button');
     
-    bgLogger.append(input,changebg);
+    var charLogger = jom.div(['debug-holder','debug-dark']);
+    /**/var select = jom.g('select',null,"char-logging");
+    /**/var scl =jom.g('button',null,'s-c-l');
     
+    
+    bgLogger.append(input,changebg);
     
     var kvndebugger = '<div id="debugger" ><div id="sceneframe" >Scene <span class="red">demo</span> Frame <span class="blue">2</span></div><div id="ado">Advance Debug Mode</div>&nbsp;<div id="toggle-debug-edit">edit</div><br><div id="advance-debug">' +
             '<div class="debug-title">Playbacks</div><br><div class="debug-holder"><div id="prev" class="pbo" title="Previous Frame"></div><div id="play" class="pbo debug-selected" title="Play/Resume|Shortcut: F7"></div><div id="pause" class="pbo" title="Pause Engine|Shortcut: F7"></div>' +
