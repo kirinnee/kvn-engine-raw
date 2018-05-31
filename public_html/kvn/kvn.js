@@ -185,8 +185,26 @@ jom = {
         }
         return img;
 
-    }
+    },
+    g:function(g,cls,id,html){
+        var d = $("<"+g+"/>");
+        if (typeof cls === "string" || typeof cls === "number") {
+            d.addClass(cls);
+        } else if (cls instanceof Array) {
+            for (var x in cls) {
+                d.addClass(cls[x]);
+            }
+        }
+        if (typeof id === "string" || typeof id === "number") {
 
+            d.attr('id', id);
+        }
+        if (typeof html === "string" || typeof html === "number") {
+            d.html(html);
+        }
+        return d;
+    }
+    
 };
 
 var scriptGroup1 = function () {
@@ -423,8 +441,52 @@ var scriptGroup6 = function () {
 
 var scriptGroup7 = function () {
 
-    var bgLogger = "<br><div class='debug-holder debug-dark'><input type='file' id='bgchange'/><button type='button' id='c-bg'>Change background</button></div>";
-    var kvnhtml = '<div id="canvas"><div id="vn-screen"><div id="vn-bkgd"></div><div id="bkgd-holder"><div id="vn-bkgd-r"><div class="glitch__img"></div><div class="glitch__img"></div><div class="glitch__img"></div><div class="glitch__img"></div><div class="glitch__img"></div></div></div><div id="preoverlay"></div><div id="overlay"> </div><div id="postoverlay"><div id="weatherEffects"></div><div id="maintext" class="gameobj"><div id="centered"></div><div id="top-left"><div id="actual-text"></div></div></div><div id="nametext" class="gameobj"><div id="name-text"></div></div><div id="completionmarker" class="gameobj"></div></div><div id="clickbox"></div><div id="hclickbox" onClick=""> <div id="optionholder" style="display:none"></div></div><div id="backlog"></div></div></div>';
+    var canvas = jom.div(null,"canvas");
+    /**/var vnscreen = jom.div(null,"vn-screen");
+    /******/var backdrop = jom.div(null,"vn-bkgd");
+    /**//**/var bkgdholder = jom.div(null,"bkgd-holder");
+    /**//**//**/var realbkgd = jom.div(null,"vn-bkgd-r");
+    /**//**//**//**/var glitchimg = [];
+                    for(var i=0;i<5;i++){
+                        glitchimg.push(jom.div("glitch__img"));
+                    }
+    /**//**/var preoverlay = jom.div(null,"preoverlay");
+    /**//**/var overlay = jom.div(null,"overlay");
+    /**//**/var postoverlay = jom.div(null,"postoverlay");
+    /**//**//**/var weather = jom.div(null,"weatherEffects");
+    /**//**//**/var maintext = jom.div("gameobj","maintext");
+    /**//**//**//**/var centered = jom.div(null,"centered");
+    /**//**//**//**/var topleft = jom.div(null,"top-left");
+    /**//**//**//**//**/var actualText = jom.div(null,"actual-text");
+    /**//**//**/var nameText = jom.div("gameobj","nametext");
+    /**//**//**//**/var nametext = jom.div(null,"name-text");
+    /**//**//**/var completionMarker = jom.div("gameobj","completionmarker");
+    /**//**/var clickbox = jom.div(null,"clickbox");
+    /**//**/var hclickbox = jom.div(null,"hclickbox");
+    /**//**//**/var opholder = jom.div(null,"optionholder");
+                opholder.attr('style',"display:none");
+    /**//**/var backlog = jom.div(null,"backlog");
+    
+    topleft.append(actualText);
+    
+    realbkgd.append(glitchimg);
+    maintext.append([centered,topleft]);
+    nameText.append(nametext);
+    
+    bkgdholder.append(realbkgd);
+    postoverlay.append([weather,maintext,nameText,completionMarker]);
+    hclickbox.append(opholder);
+    
+    vnscreen.append([backdrop,bkgdholder,preoverlay,overlay,postoverlay,clickbox,hclickbox,backlog]);
+    
+    canvas.append(vnscreen);
+    
+    var bgLogger = jom.div(['debug-holder','debug-dark']);
+    /**/var input = $("<input type='file/>").attr('id','bgchange');
+    /**/var changebg = jom.g('button',null,'c-bg',"Change Background").attr('type','button');
+    
+    bgLogger.append(input,changebg);
+    
     
     var kvndebugger = '<div id="debugger" ><div id="sceneframe" >Scene <span class="red">demo</span> Frame <span class="blue">2</span></div><div id="ado">Advance Debug Mode</div>&nbsp;<div id="toggle-debug-edit">edit</div><br><div id="advance-debug">' +
             '<div class="debug-title">Playbacks</div><br><div class="debug-holder"><div id="prev" class="pbo" title="Previous Frame"></div><div id="play" class="pbo debug-selected" title="Play/Resume|Shortcut: F7"></div><div id="pause" class="pbo" title="Pause Engine|Shortcut: F7"></div>' +
