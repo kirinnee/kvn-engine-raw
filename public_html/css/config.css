@@ -1,0 +1,42 @@
+@font-face {
+    font-family: 'qs';
+    src: url("quicksand.otf") format("opentype");
+}
+
+#maintext{
+    color:black;
+    font-family: 'qs', Verdana, sans-serif;
+    background: rgba(200,200,200,0.8);
+    border: solid 1px black;
+    border-radius: 1vw;
+
+}
+
+#nametext{
+    color:black;
+    font-family: 'qs', Verdana, sans-serif;
+    background: white;
+    border: solid 1px black;
+    border-radius: 20px;
+}
+
+.option{
+    color: black;
+    font-family: 'qs', Verdana, sans-serif;
+    background: rgba(255,255,255,0.5);
+    border: solid 1px black;
+    border-radius: 5px;
+}
+
+@media (hover:none), (hover:on-demand){
+    #maintext{
+        background: rgba(200,200,200,0.8);
+        border: solid 1px black;
+        border-radius: 1vw;
+    }
+
+    #nametext{
+        border: solid 1px black;
+        border-radius: 20px;
+    }
+}

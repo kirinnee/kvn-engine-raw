@@ -1,0 +1,17 @@
+{
+    "name": "kvn",
+    "version": "1.0.0",
+    "keywords": [
+        "util",
+        "functional",
+        "server",
+        "client",
+        "browser"
+    ],
+    "author": "Ernest Ng",
+    "contributors": [],
+    "dependencies": {},
+    "devDependencies": {
+        "babel-cli": "^6.26.0"
+    }
+}
