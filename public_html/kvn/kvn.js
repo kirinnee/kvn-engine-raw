@@ -488,6 +488,8 @@ var scriptGroup7 = function () {
     bgLogger.append(input,changebg);
     
     
+    
+    
     var kvndebugger = '<div id="debugger" ><div id="sceneframe" >Scene <span class="red">demo</span> Frame <span class="blue">2</span></div><div id="ado">Advance Debug Mode</div>&nbsp;<div id="toggle-debug-edit">edit</div><br><div id="advance-debug">' +
             '<div class="debug-title">Playbacks</div><br><div class="debug-holder"><div id="prev" class="pbo" title="Previous Frame"></div><div id="play" class="pbo debug-selected" title="Play/Resume|Shortcut: F7"></div><div id="pause" class="pbo" title="Pause Engine|Shortcut: F7"></div>' +
             '<div id="replay" class="pbo" title="Replay Current Frame"></div> <div id="next" class="pbo" title="Next Frame"></div></div><br>' +
@@ -499,7 +501,7 @@ var scriptGroup7 = function () {
             (backgroundLogging ? bgLogger : "") +
             '</div></div>';
 
-    var kvnConsole = '<div id="errorscreen"></div>';
+    var kvnConsole = jom.div(null,"errorscreen");
     document.getElementById("kvn").innerHTML = kvnhtml + (debugMode ? kvndebugger : "") + (useKirinneeConsole ? kvnConsole : "");
     var ci = setInterval(function () {
         if (document.getElementById("canvas") !== null) {
