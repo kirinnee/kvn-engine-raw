@@ -58,3 +58,5 @@ var responsiveImageDefKey = "def";
 var responsiveImageDefSize = 2000;
 //100 = 2000px 
 var responsiveImage = {"def":100};
+
+var devEnv = true;

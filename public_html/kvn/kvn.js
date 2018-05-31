@@ -1,4 +1,4 @@
-var sArr = new Array();
+
 
 var imagesLoaded = false;
 
@@ -15,7 +15,6 @@ $(window).on("load", function () {
     window.imagesLoaded = true;
 });
 
-
 //check if mobile
 window.mobilecheck = function () {
     var check = false;
@@ -26,16 +25,11 @@ window.mobilecheck = function () {
     return check;
 };
 
-
-
-
 if (screenfull.enabled) {
     screenfull.on('change', () => {
         !screenfull.isFullscreen ? $(".toggle-fs img").attr("src", "gofs.svg") : $(".toggle-fs img").attr("src", "exitfs.svg");
     });
 }
-
-
 
 //force IOS to work man wtf
 var isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -44,47 +38,7 @@ if (isiOS) {
     document.documentElement.classList.add('ios');
 }
 
-function dynamicallyLoadScript(url) {
 
-    // Add it to the end of the head section of the page (could change 'head' to 'body' to add it to the end of the body section instead)
-// Adding the script tag to the head as suggested before
-    var head = document.getElementsByTagName('head')[0];
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = url;
-
-    var id = sArr.length;
-    sArr.push(false);
-
-
-    // Then bind the event to the callback function.
-    // There are several events for cross browser compatibility.
-    script.onreadystatechange = function () {
-        sArr[id] = true;
-    };
-    script.onload = function () {
-        sArr[id] = true;
-    };
-
-    // Fire the loading
-    head.appendChild(script);
-
-}
-
-function isAllScriptLoaded() {
-    for (var i = 0; i < sArr.length; i++) {
-        if (!sArr[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
-var wth = document.getElementsByTagName("script");
-var cEle = wth[wth.length - 1];
-var dir = cEle.src;
-dir = dir.substring(0, dir.lastIndexOf('/'));
-dir += "/";
 
 var kdom = {
     div:
@@ -207,42 +161,11 @@ jom = {
 
 };
 
-var scriptGroup1 = function () {
-
-    var ls = kdom.div(null, "loadingscreen");
-    /**/var loader = kdom.div("loader");
-    /**//**/var img = kdom.img("chibi.gif");
-    var game = kdom.div(null, "the-rest-of-the-game");
-    /**/var turn = kdom.div(null, "turn");
-    /**//**/var turnh = kdom.div(null, "turn-holder", "Please turn your device to landscape mode!<br>");
-    /**//**//**/var tilt = kdom.img("tilt.png");
-    /**/var kvn = kdom.div(null, "kvn");
-    /**/var fs = kdom.div("toggle-fs");
-    /**//**/var fsimg = kdom.img("gofs.svg");
-
-
-    turnh.appendChild(tilt);
-
-    loader.appendChild(img);
-    loader.innerHTML += "<div id='pace-integration-div'>loading...</div>";
-    turn.appendChild(turnh);
-    fs.appendChild(fsimg);
-
-    ls.appendChild(loader);
-    game.appendChild(turn);
-    game.appendChild(kvn);
-    game.appendChild(fs);
-
-    document.getElementById("kirinnee-visual-novel-engine").appendChild(ls);
-    document.getElementById("kirinnee-visual-novel-engine").appendChild(game);
-
-    if (typeof configVar === "undefined" || configVar === null) {
-        dynamicallyLoadScript(dir + "config.js");
-    } else {
-        dynamicallyLoadScript(dir + configVar);
-    }
-
-};
+var wth = document.getElementsByTagName("script");
+var cEle = wth[wth.length - 1];
+var dir = cEle.src;
+dir = dir.substring(0, dir.lastIndexOf('/'));
+dir += "/";
 
 function setDivWH(w, h) {
     if (cssWidth && embbedMode) {
@@ -280,7 +203,34 @@ var heightMultiplier = 0.5626;
 var gkvnH;
 var gkvnW;
 
-var scriptGroup2 = function () {
+function init() {
+
+    var ls = kdom.div(null, "loadingscreen");
+    /**/var loader = kdom.div("loader");
+    /**//**/var img = kdom.img("chibi.gif");
+    var game = kdom.div(null, "the-rest-of-the-game");
+    /**/var turn = kdom.div(null, "turn");
+    /**//**/var turnh = kdom.div(null, "turn-holder", "Please turn your device to landscape mode!<br>");
+    /**//**//**/var tilt = kdom.img("tilt.png");
+    /**/var kvn = kdom.div(null, "kvn");
+    /**/var fs = kdom.div("toggle-fs");
+    /**//**/var fsimg = kdom.img("gofs.svg");
+
+
+    turnh.appendChild(tilt);
+
+    loader.appendChild(img);
+    loader.innerHTML += "<div id='pace-integration-div'>loading...</div>";
+    turn.appendChild(turnh);
+    fs.appendChild(fsimg);
+
+    ls.appendChild(loader);
+    game.appendChild(turn);
+    game.appendChild(kvn);
+    game.appendChild(fs);
+
+    document.getElementById("kirinnee-visual-novel-engine").appendChild(ls);
+    document.getElementById("kirinnee-visual-novel-engine").appendChild(game);
 
     var kvnWidth = vnScreenWidth;
     var ratio = vnScreenRatio.split(":");
@@ -408,39 +358,6 @@ var scriptGroup2 = function () {
         }
     });
 
-
-    dynamicallyLoadScript(dir + "backend/character.js");
-    dynamicallyLoadScript(dir + "backend/frame.js");
-    dynamicallyLoadScript(dir + "backend/option.js");
-    dynamicallyLoadScript(dir + "backend/scene.js");
-    dynamicallyLoadScript(dir + "backend/soundtype.js");
-    dynamicallyLoadScript(dir + "backend/sound.js");
-    dynamicallyLoadScript(dir + "backend/stage.js");
-    dynamicallyLoadScript(dir + "backend/textbox.js");
-};
-
-var scriptGroup3 = function () {
-
-    dynamicallyLoadScript(dir + "backend/vnconsole.js");
-};
-
-var scriptGroup4 = function () {
-
-    dynamicallyLoadScript(dir + "soundengine.js");
-};
-
-var scriptGroup5 = function () {
-
-    dynamicallyLoadScript(dir + "backend/core.js");
-};
-
-var scriptGroup6 = function () {
-
-    dynamicallyLoadScript(dir + "backend/debug.js");
-};
-
-var scriptGroup7 = function () {
-
     var canvas = jom.div(null, "canvas");
     /**/var vnscreen = jom.div(null, "vn-screen");
     /******/var backdrop = jom.div(null, "vn-bkgd");
@@ -487,7 +404,7 @@ var scriptGroup7 = function () {
 
     var charLogger = jom.div(['debug-holder', 'debug-dark']);
     /**/var select = jom.g('select', null, "char-logging");
-    /**/var scl = jom.g('button', null, 's-c-l');
+    /**/var scl = jom.g('button', null, 's-c-l','Start Logging');
 
 
     //have br
@@ -507,7 +424,7 @@ var scriptGroup7 = function () {
     //br
     /**//**/var pbh = jom.div('debug-holder');
     /**//**//**/var prev = jom.div('pbo', 'prev').attr('title', "Previous Frame");
-    /**//**//**/var play = jom.div(['pbo','debug-selected'], 'play').attr('title', "Play/Resume|Shortcut: F7");
+    /**//**//**/var play = jom.div(['pbo', 'debug-selected'], 'play').attr('title', "Play/Resume|Shortcut: F7");
     /**//**//**/var pause = jom.div('pbo', 'pause').attr('title', "Pause Engine|Shortcut: F7");
     /**//**//**/var replay = jom.div('pbo', 'replay').attr('title', "Replay Current Frame");
     /**//**//**/var next = jom.div('pbo', 'next').attr('title', "Next Frame");
@@ -545,6 +462,20 @@ var scriptGroup7 = function () {
     var kvnConsole = jom.div(null, 'errorscreen');
     $("#kvn").append(canvas).promise().done(function () {
         setBacklog(window.gkvnW, window.gkvnH);
+
+        var alert = jom.div('alert');
+        /**/var abox = jom.div('alert-box');
+        /**//**/var atit = jom.div('alert-title');
+        /**//**/var atext = jom.div('alert-text');
+        /**//**/var abutt = jom.div('alert-button');
+        /**//**//**/var okbut = jom.g('button', null, "ok-button", "OK");
+
+        abutt.append(okbut);
+        abox.append([atit, atext, abutt]);
+        alert.append(abox);
+
+        $("html").append(alert);
+
         if (paceIntegration) {
             $('#pace-integration-div').html("");
             (function () {
@@ -1517,6 +1448,8 @@ var scriptGroup7 = function () {
         } else {
             window.paceDone = true;
         }
+
+
     });
     if (debugMode) {
         $("#kvn").append(kvndebugger);
@@ -1524,90 +1457,79 @@ var scriptGroup7 = function () {
     if (useKirinneeConsole) {
         $("#kvn").append(kvnConsole);
     }
-
-    for (var lo = 0; lo < scripts.length; lo++) {
-        dynamicallyLoadScript(dir + "scripts/" + scripts[lo]);
-    }
-};
-
-var scriptGroup8 = function () {
-
-    $(document).ready(function () {
-        var ci = setInterval(function () {
-            if (document.getElementById("canvas") !== null) {
-                clearInterval(ci);
-                $("html").append('<div class="alert"><div class="alert-box"><div class="alert-title"> </div> <div class="alert-text"></div><div class="alert-button"><button id="ok-button">OK</button></div></div></div>');
-
-            }
-
-        }, 10);
-    });
-
-    if (builderVar !== null && typeof builderVar !== "undefined") {
-        if (builderVar === true) {
-            window.sid = sessionStorage.getItem("sceneid");
-            window.frameVar = parseInt(sessionStorage.getItem("frame"));
-            var hex = sessionStorage.getItem("preview");
-            $('<script>').attr('type', 'text/javascript').text(hex).appendTo('head');
-        }
-    }
-
     if (!enableSound) {
         VN.setVolume(0);
         BGM.setVolume(0);
         SFX.setVolume(0);
     }
 
-    if (typeof initVar === "undefined" || initVar === null) {
-        dynamicallyLoadScript(dir + "scripts/init.js");
+    if (window.mobilecheck() && !isiOS) {
+        if (hasFullScreenOption && alertForFullScreen) {
+            alert("Enter full screen for a better experience! Click the button on the top-right corner to enter fullscreen!");
 
-    } else {
-        dynamicallyLoadScript(dir + initVar);
+        }
     }
+}
+;
+
+
+var scriptGroup7 = function () {
+
 };
 
-var scriptGroup9 = function () {
 
-    dynamicallyLoadScript(dir + "backend/initialize.js");
+var bootstrapScript = false;
+var sArr = new Array();
+function dynamicallyLoadScript(url) {
 
-};
+    // Add it to the end of the head section of the page (could change 'head' to 'body' to add it to the end of the body section instead)
+    // Adding the script tag to the head as suggested before
+    var head = document.getElementsByTagName('head')[0];
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = url;
+
+    var id = sArr.length;
+    sArr.push(false);
 
 
+    // Then bind the event to the callback function.
+    // There are several events for cross browser compatibility.
+    script.onreadystatechange = function () {
+        sArr[id] = true;
+    };
+    script.onload = function () {
+        sArr[id] = true;
+    };
 
+    // Fire the loading
+    head.appendChild(script);
+
+}
+
+function isAllScriptLoaded() {
+    for (var i = 0; i < sArr.length; i++) {
+        if (!sArr[i]) {
+            return false;
+        }
+    }
+    return bootstrapScript;
+}
+
+if (devEnv) {
+    var ci = setInterval(function () {
+        if(typeof window.publicStaticVoidMain === "function"){
+            clearInterval(ci);
+            for (var lo = 0; lo < scripts.length; lo++) {
+                console.log(scripts[lo]);
+                dynamicallyLoadScript(dir + "scripts/" + scripts[lo]);
+            }
+            bootstrapScript = true;
+        }
+    }, 10);
+}
 
 $(document).ready(function () {
-    checkScript(scriptGroup1, function () {
-        checkScript(scriptGroup2, function () {
-            checkScript(scriptGroup3, function () {
-                checkScript(scriptGroup4, function () {
-                    checkScript(scriptGroup5, function () {
-                        checkScript(scriptGroup6, function () {
-                            checkScript(scriptGroup7, function () {
-                                checkScript(scriptGroup8, function () {
-                                    checkScript(scriptGroup9, function () {
-                                        //console.log(performance.now());
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });
-})
-function checkScript(scripts, callback) {
+    init();
+});
 
-    scripts();
-    var cs = setInterval(function () {
-        if (isAllScriptLoaded()) {
-            callback();
-            clearInterval(cs);
-        }
-    }, 100);
-}
-
-if (window.mobilecheck() && !isiOS) {
-    if (hasFullScreenOption && alertForFullScreen)
-        alert("Enter full screen for a better experience! Click the button on the top-right corner to enter fullscreen!");
-}

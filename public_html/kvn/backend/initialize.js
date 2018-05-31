@@ -20,10 +20,10 @@ $(document).ready(function () {
 
 
     var loadLoop = setInterval(function () {
-        //console.log("trying...");
+
 
         if (window.imagesLoaded && isAllSoundLoaded() && isAllScriptLoaded() && window.paceDone) {
-            //console.log("soundloaded?");
+
             clearTimeout(timeout);
             clearInterval(loadLoop);
 
