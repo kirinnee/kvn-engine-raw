@@ -24,7 +24,7 @@ var completionMarkerRunningColor = "#ff6666";
 var completionMarkerCompleteColor = "#6bffa1";
 
 //debug mode
-var debugMode = false;
+var debugMode = true;
 //catches native error
 var catchNativeError = false;
 //generates a fake error on console, for stack tracing
@@ -32,9 +32,9 @@ var generateBrowserConsoleStacktrace = true;
 //Only has effect if 'generateBrowserConsoleStacktrace' is true. Generates red error with the full freaking stacktrace
 var verboseError = false;
 //user my console :>>
-var useKirinneeConsole = false;
+var useKirinneeConsole = true;
 //hide advance debug by default
-var hideAdvanceDebug = true;
+var hideAdvanceDebug = false;
 //advance debug "go" scene function escape error log. Note: this may be screwy as all hell
 var debugGoSceneEvadeError = true;
 
