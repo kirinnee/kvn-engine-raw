@@ -180,8 +180,13 @@ class Character {
         this.dskewx = this.vskewx;
         this.dskewy = this.vskewy;
 
+
+        //cycle
         this.isCycle = false;
         this.cycleseq = null;
+
+        this.break = false;
+        this.breakProm = null;
 
         this.canSkip = true;
 
@@ -195,6 +200,8 @@ class Character {
 
         this.checkingLoop = null;
 
+
+
         //logging
         this.logging = false;
 
@@ -203,8 +210,11 @@ class Character {
         this.stage = null;
         this.completed = false;
 
-        this.break = false;
-        this.breakProm = null;
+        //frillPresets
+        this.preSpeakScale = 1.05;
+        this.dpreSpeakScale = 1.05;
+        this.preSpeakTime = 200;
+        this.dpreSpeakTime = 200;
 
     }
     //getters
@@ -583,6 +593,9 @@ class Character {
         this.dskewx = this.vskewx;
         this.dskewy = this.vskewy;
 
+        this.dpreSpeakScale = this.preSpeakScale;
+        this.dpreSpeakTime = this.preSpeakTime;
+
         this.completed = true;
 
         return this;
@@ -597,6 +610,16 @@ class Character {
     setDefaultSkippable(dskip) {
         dskip = this.sanitizeInput("boolean", dskip, this.ddSkip, true, "dskip", "setDefaultSkippable");
         this.dSkip = dskip;
+        return this;
+    }
+
+    setPreSpeakScale(scale){
+        this.preSpeakScale = scale;
+        return this;
+    }
+    
+    setPreSpeakTime(time){
+        this.preSpeakTime = time;
         return this;
     }
 
@@ -895,6 +918,9 @@ class Character {
         clearInterval(this.checkingLoop);
 
         this.checkingLoop = null;
+
+        this.preSpeakScale = this.dpreSpeakScale;
+        this.preSpeakTime = this.dpreSpeakTime;
 
         //logginh
         this.logging = false;
@@ -1548,6 +1574,57 @@ class Character {
         }
     }
 
+    endSpeak(promise, timing) {
+        var prev = this.stage.previousCharacter;
+        var char = this;
+        timing = this.sanitizeInput("number", timing, this.preSpeakTime, 200, "time", "endSpeak");
+        if (prev !== null && typeof prev !== "undefined") {
+            prev.scale(null, null, 200, function () {
+                char.stage.previousCharacter = null;
+                if (typeof promise !== "undefined" && promise !== null) {
+                    if (typeof promise === "function") {
+                        promise();
+                    } else {
+                        char.typeError("Promise has to be a function! ", promise);
+                    }
+                }
+            });
+        }
+    }
+
+    preSpeak(promise, scale, timing) {
+        scale = this.sanitizeInput("number", scale, this.preSpeakScale, 1.05, "scale", "preSpeak");
+        timing = this.sanitizeInput("number", timing, this.preSpeakTime, 200, "time", "preSpeak");
+
+
+        var prev = this.stage.previousCharacter;
+        var char = this;
+
+        var p = function () {
+
+            char.scale(scale, scale, timing, function () {
+                char.bringToFront(function () {
+                    char.stage.previousCharacter = char;
+                    if (typeof promise !== "undefined" && promise !== null) {
+                        if (typeof promise === "function") {
+                            promise();
+                        } else {
+                            char.typeError("Promise has to be a function! ", promise);
+                        }
+                    }
+                });
+            });
+        };
+
+        if (prev !== null && typeof prev !== "undefined") {
+            prev.scale(null, null, timing, function () {
+                p();
+            });
+        } else {
+            p();
+        }
+    }
+
     fix() {
         clearInterval(this.gloop);
 
@@ -1620,7 +1697,7 @@ class Character {
         }
     }
 
-    backFromCycle(){
+    backFromCycle() {
         this.spriteArray = clone(this.cyspriteArray);
         this.w = this.cyW;
         this.h = this.cyH;
@@ -1648,7 +1725,7 @@ class Character {
 
     stopCycle(time, promise, swing, skip) {
         this.name = this.cyName;
-        
+
         this.cycleseq = null;
         //cut animations
         var id = "#" + this.id;
