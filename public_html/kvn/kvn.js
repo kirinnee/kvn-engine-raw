@@ -38,8 +38,6 @@ if (isiOS) {
     document.documentElement.classList.add('ios');
 }
 
-
-
 var kdom = {
     div:
             function div(cls, id, html) {
@@ -72,7 +70,7 @@ var kdom = {
     }
 };
 
-jom = {
+var jom = {
     div: function (cls, id, html) {
         var d = $("<div/>");
         if (typeof cls === "string" || typeof cls === "number") {
@@ -97,30 +95,28 @@ jom = {
             if (!useResponsiveImages) {
                 img.attr('src', src);
             } else {
-                function replaceLast(x, y, z) {
-                    var a = x.split("");
-                    a[x.lastIndexOf(y)] = z;
-                    return a.join("");
-                }
-
                 var split = src.split(".");
                 var ext = ("." + split.pop()).trim();
-                var base = replaceLast(src, ext, '').trim();
+                var base = split.join('.').trim();
 
                 var dk = responsiveImageDefKey;
                 var ri = responsiveImage;
                 var unit = responsiveImageDefSize / 100;
                 var srcset = "";
 
-                img.attr('src', base + "_" + ri[dk] + ext);
+                img.attr('src', base + "_" + dk.trim() + ext);
                 for (var x in ri) {
                     if (typeof x === "string" && typeof ri[x] === "number") {
                         var key = x.trim();
                         var val = parseInt(ri[x]);
-                        srcset += ((base + "_" + key + ext).trim() + " " + (val + "w").trim() + ",").trim();
+                        srcset += ((base + "_" + key + ext).trim() + " " + ((val * unit) + "w").trim() + ",").trim();
                     }
                 }
                 srcset = srcset.trim();
+                var lastChar = srcset.slice(-1);
+                if (lastChar === ',') {
+                    srcset = srcset.slice(0, -1);
+                }
                 img.attr('srcset', srcset);
                 img.attr('sizes', '100vw');
             }
@@ -157,8 +153,45 @@ jom = {
             d.html(html);
         }
         return d;
-    }
+    },
+    string: function (string) {
+        if (typeof string === "string" && string.trim() !== "") {
+            return true;
+        }
+        return false;
+    },
+    changeImg: function (dom, src) {
 
+        if (!useResponsiveImages) {
+            dom.attr('src', src);
+        } else {
+            var split = src.split(".");
+            var ext = ("." + split.pop()).trim();
+            var base = split.join('.').trim();
+
+            var dk = responsiveImageDefKey;
+            var ri = responsiveImage;
+            var unit = responsiveImageDefSize / 100;
+            var srcset = "";
+
+            dom.attr('src', base + "_" + dk.trim() + ext);
+            for (var x in ri) {
+                if (typeof x === "string" && typeof ri[x] === "number") {
+                    var key = x.trim();
+                    var val = parseInt(ri[x]);
+                    srcset += ((base + "_" + key + ext).trim() + " " + ((val * unit) + "w").trim() + ",").trim();
+                }
+            }
+            srcset = srcset.trim();
+            var lastChar = srcset.slice(-1);
+            if (lastChar === ',') {
+                srcset = srcset.slice(0, -1);
+            }
+            dom.attr('srcset', srcset);
+            dom.attr('sizes', '100vw');
+        }
+
+    }
 };
 
 var wth = document.getElementsByTagName("script");
@@ -365,7 +398,10 @@ function init() {
     /**//**//**/var realbkgd = jom.div(null, "vn-bkgd-r");
     /**//**//**//**/var glitchimg = [];
     for (var i = 0; i < 5; i++) {
-        glitchimg.push(jom.div("glitch__img"));
+        var glitch = jom.div("glitch__img");
+        var im = jom.img();
+        glitch.append(im);
+        glitchimg.push(glitch);
     }
     /**//**/var preoverlay = jom.div(null, "preoverlay");
     /**//**/var overlay = jom.div(null, "overlay");
@@ -399,12 +435,12 @@ function init() {
     canvas.append(vnscreen);
 
     var bgLogger = jom.div(['debug-holder', 'debug-dark']);
-    /**/var input = $("<input type='file/>").attr('id', 'bgchange');
+    /**/var input = $("<input type='file'/>").attr('id', 'bgchange');
     /**/var changebg = jom.g('button', null, 'c-bg', "Change Background").attr('type', 'button');
 
     var charLogger = jom.div(['debug-holder', 'debug-dark']);
     /**/var select = jom.g('select', null, "char-logging");
-    /**/var scl = jom.g('button', null, 's-c-l','Start Logging');
+    /**/var scl = jom.g('button', null, 's-c-l', 'Start Logging');
 
 
     //have br
@@ -452,10 +488,10 @@ function init() {
     kvndebugger.append([sceneframe, ado, "&nbsp;", edit, "<br>", adb]);
 
     if (characterLogging) {
-        kvndebugger.append(["<br>", charLogger]);
+        adb.append(["<br>", charLogger]);
     }
     if (backgroundLogging) {
-        kvndebugger.append(["<br>", bgLogger]);
+        adb.append(["<br>", bgLogger]);
     }
 
 
@@ -1472,12 +1508,6 @@ function init() {
 }
 ;
 
-
-var scriptGroup7 = function () {
-
-};
-
-
 var bootstrapScript = false;
 var sArr = new Array();
 function dynamicallyLoadScript(url) {
@@ -1518,7 +1548,7 @@ function isAllScriptLoaded() {
 
 if (devEnv) {
     var ci = setInterval(function () {
-        if(typeof window.publicStaticVoidMain === "function"){
+        if (typeof window.publicStaticVoidMain === "function") {
             clearInterval(ci);
             for (var lo = 0; lo < scripts.length; lo++) {
                 console.log(scripts[lo]);
@@ -1527,6 +1557,8 @@ if (devEnv) {
             bootstrapScript = true;
         }
     }, 10);
+} else {
+    bootstrapScript = true;
 }
 
 $(document).ready(function () {

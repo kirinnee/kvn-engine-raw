@@ -1,13 +1,12 @@
 'use strict';
 
 class Stage {
-    
+
     constructor(id, background, width, height, x, y, oriX, oriY) {
 
         if (typeof id !== "string") {
             this.typeError("id in constructor must be a string! ", id);
         }
-
 
         if (typeof background !== "string") {
             this.typeError("background image in constructor must be a string (location to image)! ", background);
@@ -37,8 +36,8 @@ class Stage {
         this.charArray = new Array();
         this.dcharArray = new Array();
 
-        this.cbkgd = background;
-        this.dcbkgd = background;
+        this.cbkgd = "def";
+        this.dcbkgd = "def";
 
 
         this.bkgdArr = [];
@@ -277,65 +276,16 @@ class Stage {
         }
     }
 
-    applyCharacterCSS(char) {
-        var newX = char.getProjectedX(char.xAlign, char.anchorX, char.x, char.w);
-        var newY = char.getProjectedY(char.yAlign, char.anchorY, char.y, char.h);
-        if (!embbedMode) {
-            //values calculation
-            var x = newX * char.xscale() + "vw";      //x pos
-            var y = newY + "vw";                    //y pos
-            var w = char.w * char.xscale() + "vw";    //width
-            var h = char.h * char.xscale() + "vw";    //height
-        } else {
-            var x = newX + "%";      //x pos
-            var y = newY / char.yscale() + "%";                    //y pos
-            var w = char.w + "%";    //width
-            var h = char.h * char.xscale() / char.yscale() + "%";    //height
+    getCurrentBackground() {
+        return this.getBackgroundPath(this.cbkgd);
+    }
+
+    getBackgroundPath(sprite) {
+        var sp = this.bkgdArr[sprite];
+        if (sp.charAt(0) === "/") {
+            sp = sp.substring(1, sp.length);
         }
-
-        var a = char.opacity;                   //alpha
-
-        //filters
-        var blur = "blur(" + char.vblur * 10 + "px)";
-        var invert = " invert(" + char.vinvert * 100 + "%)";
-        var grayscale = " grayscale(" + char.vgrayscale * 100 + "%)";
-        var sepia = " sepia(" + char.vsepia * 100 + "%)";
-        var contrast = " contrast(" + char.vcontrast * 100 + "%)";
-        var saturate = " saturate(" + char.vsaturation * 100 + "%)";
-        var brightness = " brightness(" + char.vbrightness * 100 + "%)";
-        var hue = " hue-rotate(" + char.vhue + "deg)";
-
-        //transform
-        var scaleX = char.flipped ? -1 : 1;
-        var scaleY = char.vflipped ? -1 : 1;
-        var skewX = char.vskewx + "deg";
-        var skewY = char.vskewy + "deg";
-        var rotate = char.vrotate + "deg";
-
-
-        //console.log(blur + invert + grayscale + sepia + contrast + saturate + brightness + hue);
-        //css application
-        char.getDiv().css("left", x);
-        char.getDiv().css("top", y);
-        char.getDiv().css("width", w);
-        char.getDiv().css("height", h);
-        char.getDiv().css("opacity", a);
-        char.getDiv().css("filter", blur + invert + grayscale + sepia + contrast + saturate + brightness + hue);
-
-        TweenLite.to(char.getDiv(), 0, {scaleX: scaleX, scaleY: scaleY, skewX: skewX, skewY: skewY, rotation: rotate});
-
-
-        //glitching stuff
-        var src = "";
-        char.getDiv().children("img").each(function (e) {
-            if ($(this).css("display") !== "none") {
-                src = $(this).attr("src");
-            }
-        });
-        char.getDiv().children(".glitch__img").each(function () {
-            $(this).css("background-image", "url('" + src + "')");
-        });
-
+        return this.getImageDirectory() + sp;
     }
 
     selfReapplyFilterCSS() {
@@ -355,42 +305,13 @@ class Stage {
 
     setCharArray(array, promise) {
         if (this.isActive) {
-            var newStage = "";
-            for (var i = 0; i < array.length; i++) {
-                var id = array[i].getID();
-                var img = array[i].getImage();
-                if (img.charAt(0) === "/") {
-                    img = img.substring(1, img.length);
-                }
+            var parent = $("#preoverlay");
+            parent.html("");
 
-                var path = array[i].getImageDirectory();
-                newStage += "<div class='character gameobj' id='" + id + "'>";
-                for (var key in array[i].spriteArray) {
-                    if (key !== null && key.trim() !== "") {
-                        var display = "";
-                        if (key === "def") {
-                            display = "style='visibility:visible;'";
-                        }
-                        var ip = array[i].spriteArray[key];
-                        if (ip.charAt(0) === "/") {
-                            ip = ip.substring(1, ip.length);
-                        }
-                        newStage += "<img class='charimg' " + display + " id='kvn-api-character-sprite-" + id + "-" + key + "' src='" + path + ip + "'>";
-                    }
-                }
-                for (var ii = 0; ii < 5; ii++) {
-                    newStage += "<div class='glitch__img'></div>";
-                }
-                newStage += "</div>";
-                newStage += "<div class='ghost gameobj' id='ghost-0-" + id + "'><img src='" + path + img + "'></div>";
-                newStage += "<div class='ghost gameobj' id='ghost-1-" + id + "'><img src='" + path + img + "'></div>";
-                newStage += "<div class='ghost gameobj' id='ghost-2-" + id + "'><img src='" + path + img + "'></div>";
-                newStage += "<div class='ghost gameobj' id='ghost-3-" + id + "'><img src='" + path + img + "'></div>";
-                //newStage += "<div class='ghost gameobj' id='ghost-4-" + id + "'><img src='images/char/" + img + "'></div>";
-                //newStage += "<div class='ghost gameobj' id='ghost-5-" + id + "'><img src='images/char/" + img + "'></div>";
-                //console.log("CSS Applied for : "+array[i].getName());
+            for (var i = 0; i < array.length; i++) {
+                var char = array[i];
+                parent.append(char.generateDOM());
             }
-            $("#preoverlay").html(newStage);
         }
         this.charArray = array;
         this.changeArrayOrder(array, promise);
@@ -405,7 +326,7 @@ class Stage {
                     var zI = i * 3;
                     var bonus = this.charArray[i].getOverlay() ? 500001 : 1;
                     var newZ = bonus + zI;
-                    this.applyCharacterCSS(this.charArray[i]);
+                    this.charArray[i].apply();
                     if (i === this.charArray.length - 1) {
                         this.charArray[i].getDiv().css("z-index", newZ).promise().done(function () {
                             if (promise !== null && typeof promise === "function") {
@@ -429,25 +350,33 @@ class Stage {
         window.activeStage = this;
         this.isActive = true;
         var s = this;
-        var eibg = s.cbkgd;
-        if(eibg.charAt(0)==="/"){
-            eibg = eibg.substring(1,eibg.length);
-        }
-        var path = this.getImageDirectory() + eibg;
-        
-        $("#vn-bkgd-r").css("background", "url('" + path + "')").promise().done(function () {
-            $("#vn-bkgd-r").css("background-size", "100% 100%").promise().done(function () {
-                s.animate(0, function () {
-                    s.setOpacity(backgroundOpacity);
-                    s.setBackdropOpacity(backdropOpacity);
-                    s.animate(time, promise, swing, skippable);
-                    s.setCharArray(s.charArray);
-                }, swing, skippable);
-            });
+        var pArr = [];
+        $(".bkgd-sprite-kvn").remove().promise().done(function () {
+            for (var k in s.bkgdArr) {
+                if (jom.string(k) && jom.string(s.bkgdArr[k])) {
+                    k = k.trim();
+                    var bkgd = s.getBackgroundPath(k);
+                    var uuid = s.getBackgroundID(k);
+                    var img = jom.img(bkgd, uuid,"bkgd-sprite-kvn");
+                    if (k === "def") {
+                        img.css('visibility', 'visible');
+                    }
+                    pArr.push($("#vn-bkgd-r").prepend(img).promise());
+                }
+
+            }
         });
 
+        Promise.all(pArr)
+                .then(function () {
+                    s.animate(0, function () {
+                        s.setOpacity(backgroundOpacity);
+                        s.setBackdropOpacity(backdropOpacity);
+                        s.animate(time, promise, swing, skippable);
+                        s.setCharArray(s.charArray);
+                    }, swing, skippable);
 
-
+                });
     }
 
     getImageDirectory() {
@@ -460,6 +389,10 @@ class Stage {
             }
             return cd;
         }
+    }
+
+    getBackgroundID(background) {
+        return "kvn-engine-background-id-for-" + this.id.trim() + "-sprite-" + background;
     }
 
     //globals
@@ -529,40 +462,8 @@ class Stage {
                 char.getStage().removeCharacter(char);
             }
             char.setStage(this);
-            var newStage = "";
 
-            var id = char.getID();
-            var img = char.getImage();
-            if (img.charAt(0) === "/") {
-                img = img.substring(1, img.length);
-            }
-            var path = char.getImageDirectory();
-            newStage += "<div class='character gameobj' id='" + id + "'>";
-            for (var key in char.spriteArray) {
-                if (key !== null && key.trim() !== "") {
-                    var display = "";
-                    if (key === "def") {
-                        display = "style='visibility:visible;'";
-                    }
-                    var ip = char.spriteArray[key];
-                    if (ip.charAt(0) === "/") {
-                        ip = ip.substring(1, ip.length);
-                    }
-
-                    newStage += "<img class='charimg' " + display + " id='kvn-api-character-sprite-" + id + "-" + key + "' src='" + path + ip + "'>";
-                }
-            }
-            for (var ii = 0; ii < 5; ii++) {
-                newStage += "<div class='glitch__img'></div>";
-            }
-            newStage += "</div>";
-            newStage += "<div class='ghost gameobj' id='ghost-0-" + id + "'><img src='" + path + img + "'></div>";
-            newStage += "<div class='ghost gameobj' id='ghost-1-" + id + "'><img src='" + path + img + "'></div>";
-            newStage += "<div class='ghost gameobj' id='ghost-2-" + id + "'><img src='" + path + img + "'></div>";
-            newStage += "<div class='ghost gameobj' id='ghost-3-" + id + "'><img src='" + path + img + "'></div>";
-
-
-            $("#preoverlay").append(newStage);
+            $("#preoverlay").append(char.generateDOM());
             this.charArray.push(char);
             this.changeArrayOrder(this.charArray, promise);
         }
@@ -582,12 +483,8 @@ class Stage {
                 }
             }
             char.getDiv().remove();
-            for (var i = 0; i < 4; i++) {
-                char.getGhost(i).remove();
-            }
             this.charArray.push(char);
             this.changeArrayOrder(this.charArray, promise);
-
         }
     }
 
@@ -1211,30 +1108,26 @@ class Stage {
     }
 
     instantChangeBG(src) {
-        console.log("penis");
-        $("#vn-bkgd-r").css("background", "black url('" + src + "')");
-        $("#vn-bkgd-r").css("background-size", "100% 100%");
+        var bgid = this.getBackgroundID(this.cbkgd);
+        jom.changeImg($("#" + bgid), src);
     }
 
     changeBackground(background, opacity, time, promise, swing, skippable) {
-
         var halfT = parseInt(time / 2);
         this.setOpacity(0);
         var s = this;
 
         opacity = this.sanitizeInput("number", opacity, 1, 1, "opacity", "changeBackground");
 
-        var eibg = s.bkgdArr[background];
-        if (eibg.charAt(0) === "/") {
-            eibg = eibg.substring(1, eibg.length);
-        }
-        var path = this.getImageDirectory() + eibg;
-
         this.animate(halfT, function () {
-            $("#vn-bkgd-r").css("background", "black url('" + path + "')");
-            $("#vn-bkgd-r").css("background-size", "100% 100%");
-            s.setOpacity(opacity);
-            s.animate(halfT, promise, swing, skippable);
+            var uuid = s.getBackgroundID(background);
+            s.cbkgd = background;
+            $(".bkgd-sprite-kvn").css("visibility", "hidden").promise().done(function () {
+                $("#" + uuid).css("visibility", "visible").promise().done(function () {
+                    s.setOpacity(opacity);
+                    s.animate(halfT, promise, swing, skippable);
+                });
+            });
         }, swing, skippable);
     }
 
@@ -1621,47 +1514,31 @@ class Stage {
             displayError("Unsupported Exception: stage cannot call .changeBackground if its not active: Stage id: " + this.id);
         }
 
-        function RS(input) {
-            if (input.charAt(0) === "/") {
-                input = input.substring(1, input.length);
-            }
-            return input;
-        }
+        var s = this;
 
-        var ele = this;
-
-        var path = this.getImageDirectory();
 
         $("#vn-bkgd-r").children(".glitch__img").each(function (e) {
-            $(this).css("background-image", "url('" + path + RS(ele.cbkgd) + "')");
+            jom.changeImg($(this).children('img'), s.getCurrentBackground());
             $(this).css("opacity", "1");
             $(this).css("animation-duration", "8s");
             $(this).css("animation-delay", "0s");
             $(this).css("animation-timing-function", "linear");
             $(this).css("animation-iteration-count", "infinite");
             if (e === 1) {
-                $(this).css("background-color", "var(--blend-color-2)");
-                $(this).css("background-blend-mode", "var(--blend-mode-2)");
                 $(this).css("animation-name", "glitch-anim-1");
             }
             if (e === 2) {
-                $(this).css("background-color", "var(--blend-color-3)");
-                $(this).css("background-blend-mode", "var(--blend-mode-3)");
                 $(this).css("animation-name", "glitch-anim-2");
             } else if (e === 3) {
-                $(this).css("background-color", "var(--blend-color-4)");
-                $(this).css("background-blend-mode", "var(--blend-mode-4)");
                 $(this).css("animation-name", "glitch-anim-3");
             } else if (e === 4) {
-                $(this).css("background-color", "var(--blend-color-5)");
-                $(this).css("background-blend-mode", "var(--blend-mode-5)");
                 $(this).css("animation-name", "glitch-anim-flas");
             }
         });
 
         this.gloop = setInterval(function () {
             $("#vn-bkgd-r").children(".glitch__img").each(function (e) {
-                $(this).css("background-image", "url('" + path + RS(ele.cbkgd) + "')");
+                jom.changeImg($(this).children('img'), s.getCurrentBackground());
             });
         }, 2000);
 

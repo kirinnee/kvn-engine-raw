@@ -18,24 +18,20 @@ $(document).ready(function () {
         }
     }, 10000);
 
-
     var loadLoop = setInterval(function () {
-
-
+        
         if (window.imagesLoaded && isAllSoundLoaded() && isAllScriptLoaded() && window.paceDone) {
 
             clearTimeout(timeout);
             clearInterval(loadLoop);
 
-
+            
             $("#loadingscreen").css("display", "none");
+         
             $("#the-rest-of-the-game").fadeIn(500);
 
             engineStarted = true;
             setTimeout(function () {
-
-
-
                 try {
                     window.heartbeat = new GameSound(SFX, "heartbeat.mp3", false);
                     soundLoadPhase();
@@ -43,26 +39,19 @@ $(document).ready(function () {
                 } catch (e) {
                     displayRealError("Native Exception: soundLoadPhase may not be called or defined by scripter. Please defined the function soundLoadPhase(){} and put all GameSound constructor within (or leave it blank) within any part of your script (out side of scene and frame scope)", e);
                 }
-
-
                 var fsW = window.embbedFSWidth;
                 if (screenfull.enabled) {
                     if (embbedMode) {
                         if (!screenfull.isFullscreen) {
                             //calcualte ratio to multiply by
                             window.kvnCurrentRatio = (window.gkvnW / 100);
-
-
                         } else {
                             //tabulate new ratio
                             window.kvnCurrentRatio = fsW / 100;
-
                         }
                         //adjust name text
                         var fs = 1.5 * window.kvnCurrentRatio;
                         $("#nametext").css("font-size", fs + "vw");
-                    } else {
-
                     }
                 }
 
@@ -71,7 +60,6 @@ $(document).ready(function () {
                     initDebugger();
                 } else {
                     if (psvm === "nubmarc") {
-
                         playScene(sid, frameVar);
                         initDebugger();
                     } else {
@@ -82,6 +70,7 @@ $(document).ready(function () {
                 setTimeout(function () {
                     $(window).trigger("resize");
                 }, 100);
+                
             }, 500);
         }
     }, 100);

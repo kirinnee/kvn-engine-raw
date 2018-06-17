@@ -77,11 +77,11 @@ $(document).ready(function () {
         if (pause) {
             return;
         }
-        
-        if(!embbedScrollTrigger && embbedMode && !screenfull.isFullscreen){
+
+        if (!embbedScrollTrigger && embbedMode && !screenfull.isFullscreen) {
             return;
         }
-        
+
         if (event.deltaY < -0.5) {
             //console.log(scrollCount);
             if (isBacklog) {
@@ -136,21 +136,21 @@ $(window).resize(function () {
     if (hideOverflow) {
         //console.log("resizing");
         var overflow = 0;
-        $("#kirinnee-visual-novel-engine").css("top",0);
+        $("#kirinnee-visual-novel-engine").css("top", 0);
         if ($("#kirinnee-visual-novel-engine").height() > window.innerHeight) {
             overflow = window.innerHeight - $("#kirinnee-visual-novel-engine").height();
         }
         //console.log(overflow);
 
         /*
-        var browser = navigator.userAgent.toLowerCase();
-        if (browser.indexOf('firefox') > -1) {
-            console.log(overflow);
-            overflow = 0;
-        }
-        */
+         var browser = navigator.userAgent.toLowerCase();
+         if (browser.indexOf('firefox') > -1) {
+         console.log(overflow);
+         overflow = 0;
+         }
+         */
         $("#kirinnee-visual-novel-engine").css("top", overflow + "px");
-        $(".toggle-fs").css("top",-overflow+"px");
+        $(".toggle-fs").css("top", -overflow + "px");
     }
 });
 
@@ -452,10 +452,14 @@ function chk_scroll(e) {
 function clone(obj) {
     if (null === obj || "object" !== typeof obj)
         return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr))
-            copy[attr] = clone(obj[attr]);
+    try {
+        var copy = obj.constructor();
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr))
+                copy[attr] = clone(obj[attr]);
+        }
+    } catch (er) {
+        var copy = obj.clone();
     }
     return copy;
 }

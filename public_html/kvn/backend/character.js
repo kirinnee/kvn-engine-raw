@@ -38,8 +38,6 @@ class Character {
         this.cyspriteArray["default"] = defaultImage;
         this.cyspriteArray["def"] = defaultImage;
 
-        this.currentImage = defaultImage;
-
         if (width <= 0) {
             displayError("Illegal Argument: Attempt to create a character with 0 or negative width. Character ID: " + id);
         }
@@ -84,8 +82,12 @@ class Character {
         this.opacity = 0;
         this.dopacity = 0;
 
-        this.xscale = function(){ return window.kvnXScale};
-        this.yscale = function(){ return window.kvnYscale};
+        this.xscale = function () {
+            return window.kvnXScale
+        };
+        this.yscale = function () {
+            return window.kvnYscale
+        };
 
         this.dSkip = true;
         this.ddSkip = true;
@@ -193,25 +195,25 @@ class Character {
 
         this.checkingLoop = null;
 
-        //logginh
+        //logging
         this.logging = false;
-        
+
         this.customDir = null;
 
         this.stage = null;
         this.completed = false;
+
+        this.break = false;
+        this.breakProm = null;
+
     }
     //getters
     getName() {
         return this.name;
     }
-    
+
     getID() {
         return this.id;
-    }
-
-    getImage() {
-        return this.spriteArray['default'];
     }
 
     getOverlay() {
@@ -238,8 +240,22 @@ class Character {
         return this.opacity;
     }
 
-    getCurrentI() {
-        return this.currentImage;
+    getCurrentImage() {
+        return this.getSpritePath(this.currentSprite);
+    }
+
+    getSpritePath(sprite) {
+        var sp = this.spriteArray[sprite];
+        if (typeof sp === "string") {
+
+            if (sp.charAt(0) === "/") {
+                sp = sp.substring(1, sp.length);
+            }
+            return this.getImageDirectory() + sp;
+        } else {
+            return sp;
+        }
+
     }
 
     getGrayScale() {
@@ -403,7 +419,105 @@ class Character {
     }
 
     getGhost(id) {
-        return $("#ghost-" + id + "-" + this.id);
+        return null;
+    }
+
+    apply() {
+        var newX = this.getProjectedX(this.xAlign, this.anchorX, this.x, this.w);
+        var newY = this.getProjectedY(this.yAlign, this.anchorY, this.y, this.h);
+        if (!embbedMode) {
+            //values calculation
+            var x = newX * this.xscale() + "vw";      //x pos
+            var y = newY + "vw";                    //y pos
+            var w = this.w * this.xscale() + "vw";    //width
+            var h = this.h * this.xscale() + "vw";    //height
+        } else {
+            var x = newX + "%";      //x pos
+            var y = newY / this.yscale() + "%";                    //y pos
+            var w = this.w + "%";    //width
+            var h = this.h * this.xscale() / this.yscale() + "%";    //height
+        }
+
+        var a = this.opacity;                   //alpha
+
+        //filters
+        var blur = "blur(" + this.vblur * 10 + "px)";
+        var invert = " invert(" + this.vinvert * 100 + "%)";
+        var grayscale = " grayscale(" + this.vgrayscale * 100 + "%)";
+        var sepia = " sepia(" + this.vsepia * 100 + "%)";
+        var contrast = " contrast(" + this.vcontrast * 100 + "%)";
+        var saturate = " saturate(" + this.vsaturation * 100 + "%)";
+        var brightness = " brightness(" + this.vbrightness * 100 + "%)";
+        var hue = " hue-rotate(" + this.vhue + "deg)";
+
+        //transform
+        var scaleX = this.flipped ? -1 : 1;
+        var scaleY = this.vflipped ? -1 : 1;
+        var skewX = this.vskewx + "deg";
+        var skewY = this.vskewy + "deg";
+        var rotate = this.vrotate + "deg";
+
+
+        //console.log(blur + invert + grayscale + sepia + contrast + saturate + brightness + hue);
+        //css application
+        this.getDiv().css("left", x);
+        this.getDiv().css("top", y);
+        this.getDiv().css("width", w);
+        this.getDiv().css("height", h);
+        this.getDiv().css("opacity", a);
+        this.getDiv().css("filter", blur + invert + grayscale + sepia + contrast + saturate + brightness + hue);
+
+        TweenLite.to(this.getDiv(), 0, {scaleX: scaleX, scaleY: scaleY, skewX: skewX, skewY: skewY, rotation: rotate});
+
+
+        //glitching stuff
+        var src = this.getCurrentImage();
+        if (typeof src !== "string") {
+            src = "";
+        }
+
+        this.getDiv().children(".glitch__img").each(function () {
+            jom.changeImg($(this).children("img"), src);
+        });
+    }
+
+    getSpriteID(sprite) {
+        return "kvn-api-character-sprite" + this.getID() + "-" + sprite;
+    }
+
+    generateDOM() {
+        var parent = jom.div(['character', 'gameobj'], this.getID());
+        var sprites = this.spriteArray;
+        for (var k in sprites) {
+            if (jom.string(k)) {
+                k = k.trim();
+                var id = this.getSpriteID(k);
+                var sprite = this.getSpritePath(k);
+
+                var img;
+                if (typeof sprite === "string") {
+                    img = jom.img(sprite, id, 'charimg');
+                } else {
+                    console.log("non-img");
+                    img = sprite.clone();
+                }
+                if (k === "def") {
+                    img.css('visibility', 'visible');
+                }
+                parent.append(img);
+            }
+        }
+        var glitch = jom.div('glitch__img');
+        for (var i = 0; i < 5; i++) {
+            var g = glitch.clone();
+            var ci = this.getCurrentImage();
+            if (typeof ci === "string") {
+                var img = jom.img(this.getCurrentImage());
+                g.append(img);
+            }
+            parent.append(g);
+        }
+        return parent;
     }
 
     reapplyFilterCSS() {
@@ -419,13 +533,13 @@ class Character {
 
         this.getDiv().css("filter", "grayscale(" + grayscale + ") invert(" + invert + ") blur(" + blur + ") contrast(" + contrast + ") saturate(" + saturation + ") brightness(" + brightness + ") hue-rotate(" + hue + ") sepia(" + sepia);
     }
-    
-    getImageDirectory(){
-        if(this.customDir===null || typeof this.customDir !== "string"){
+
+    getImageDirectory() {
+        if (this.customDir === null || typeof this.customDir !== "string") {
             return dir + "images/char/";
-        }else{
+        } else {
             var cd = this.customDir;
-            if(cd.charAt(cd.length-1)!=="/"){
+            if (cd.charAt(cd.length - 1) !== "/") {
                 cd += "/";
             }
             return cd;
@@ -473,9 +587,9 @@ class Character {
 
         return this;
     }
-    
-    setCustomDirectory(text){
-        text = this.sanitizeInput("string",text, null, null, "Custom Directory", "setCustomDirectory");
+
+    setCustomDirectory(text) {
+        text = this.sanitizeInput("string", text, null, null, "Custom Directory", "setCustomDirectory");
         this.customDir = text;
         return this;
     }
@@ -507,18 +621,32 @@ class Character {
         if (typeof sprite !== "string") {
             this.typeError("Sprite has to be a string (location)", sprite);
         }
-        
-        if(sprite.charAt(0)==="/"){
-            sprite = sprite.substring(1,sprite.length);
-        }
-        
-        var path = this.getImageDirectory() + sprite;
-
         if (!this.spriteArray.hasOwnProperty(name)) {
             this.spriteArray[name] = sprite;
             if (this.stage !== null && this.stage.isActive) {
-                var char = "<img class='charimg' id='kvn-api-character-sprite-" + this.id + "-" + name.trim() + "' src='" + path+ "'>";
+                var id = "kvn-api-character-sprite-" + this.id + "-" + name.trim();
+                var char = jom.img(this.getSpritePath(sprite), id, "charimg");
                 this.getDiv().append(char);
+            }
+            return this;
+        } else {
+            this.throwError("Illegal Argument: Sprite with that name already exist. Sprite name: " + name);
+        }
+    }
+
+    addHTMLSprite(name, sprite) {
+        if (typeof name !== "string") {
+            this.typeError("Sprite name has to be a string: ", name);
+        }
+        if (typeof sprite === "string") {
+            sprite = jom.div("charimg", null, sprite);
+        }
+        if (!this.spriteArray.hasOwnProperty(name)) {
+            this.spriteArray[name] = sprite;
+            if (this.stage !== null && this.stage.isActive) {
+                var id = this.getSpriteID(name);
+                sprite.attr('id', id);
+                this.getDiv().append(sprite);
             }
             return this;
         } else {
@@ -831,9 +959,8 @@ class Character {
             this.throwError("Not loaded Exception: Not allowed to animate on stage that re not loaded. ");
         }
         var char = this;
-
         this.getDiv().children(".charimg").css("visibility", "hidden").promise().done(function () {
-            var kID = "#" + "kvn-api-character-sprite-" + char.id + "-" + name;
+            var kID = "#" + char.getSpriteID(name);
             char.getDiv().children(kID).css("visibility", "visible").promise().done(function () {
                 if (promise !== null & typeof promise !== "undefined") {
                     if (typeof promise === "function") {
@@ -844,7 +971,6 @@ class Character {
                 }
             });
         });
-        this.currentImage = this.spriteArray[name];
         this.currentSprite = name;
 
     }
@@ -1292,6 +1418,13 @@ class Character {
                         }
 
 
+                        if (char.isCycle && char.break) {
+                            console.log("readjusting");
+                            char.break = false;
+                            promise = char.breakProm;
+                            char.breakProm = null;
+                            console.log(promise);
+                        }
                         if (typeof promise !== "undefined" && promise !== null) {
                             if (typeof promise === "function") {
                                 promise();
@@ -1313,164 +1446,9 @@ class Character {
 
     //frill
     heartAttack(xOff, yOff, promise, skip) {
-        if (!this.completed) {
-            this.throwError("Incomplete Object Construction Exception: Character object not completed in construction. Please call chain-able method '.complete()' to complete construction.");
+        if (typeof promise === "function") {
+            promise();
         }
-        if (this.stage === null) {
-            this.throwError("Null Exception: Character not added to stage.");
-        } else if (!this.stage.isActive) {
-            this.throwError("Not loaded Exception: Not allowed to animate on stage that re not loaded. ");
-        }
-
-        skip = this.sanitizeInput("boolean", skip, this.dSkip, true, " skippable", "heartAttack");
-
-        yOff = this.sanitizeInput("number", yOff, 0, 0, "yOff", "heartAttack");
-        xOff = this.sanitizeInput("number", xOff, 0, 0, "xOff", "heartAttack");
-
-        var cX = this.getRealX();
-        var centerX = this.getProjectedX(1, 1, this.x, this.w);
-        var xOffCenter = cX - centerX;
-
-        var cY = this.getRealY();
-        var centerY = this.getProjectedY(1, 1, this.y, this.h);
-        var yOffCenter = cY - centerY;
-
-        var noOfGhost = 4;
-        //console.log("called fuckers");
-        var ghost = new Array();
-        for (var i = 0; i < noOfGhost; i++) {
-            ghost.push(this.getGhost(i));
-        }
-
-        var ww = new Array();
-        for (var i = 0; i < noOfGhost; i++) {
-            ww.push(this.w * (1.3 + i * 0.05));
-        }
-
-        var hh = new Array();
-        for (var i = 0; i < noOfGhost; i++) {
-            hh.push(this.h * (1.3 + i * 0.05));
-        }
-
-        var xx = new Array();
-        for (var i = 0; i < noOfGhost; i++) {
-            xx.push(this.getProjectedX(1, 1, this.x + xOffCenter, ww[i]) + xOff);
-        }
-
-        var yy = new Array();
-        for (var i = 0; i < noOfGhost; i++) {
-            yy.push(this.getProjectedY(1, 1, this.y + yOffCenter, hh[i]) + yOff);
-        }
-
-        var hf = (this.flipped ? "-1" : "1");
-        var vf = (this.vflipped ? "-1" : "1");
-        var z = this.getDiv().css("z-index");
-
-        var char = this;
-
-        var src = dir + "images/char/" + char.currentImage;
-        char.getDiv().children(".imgchar").each(function () {
-            if ($(this).css("display") !== "none") {
-                src = $(this).attr('src');
-            }
-        });
-
-        for (var i = 0; i < noOfGhost; i++) {
-            ghost[i].children("img").attr("src", src);
-            ghost[i].css("left", xx[i] * 0.85 + "vw");
-            ghost[i].css("top", yy[i] + "vw");
-            ghost[i].css("width", ww[i] * 0.85 + "vw");
-            ghost[i].css("height", hh[i] * 0.85 + "vw");
-            ghost[i].css("transform", "translate(" + hf + "," + vf + ")");
-            ghost[i].css("filter", "invert(100%)");
-            ghost[i].css("z-index", z);
-            ghost[i].css("display", "block")
-        }
-
-        this.getDiv().css("filter", "invert(100%)");
-        var time = 325;
-        var pause = 0;
-        var out = 325;
-
-        var ele = this;
-        var cArr = this.stage.getCharArray();
-        for (var i = 0; i < cArr.length; i++) {
-            cArr[i].getDiv().css("filter", "invert(100%");
-        }
-
-        this.canSkip = skip;
-
-        $("#vn-bkgd-r").css("filter", "invert(100%)").promise().done(function () {
-            for (var i = 0; i < noOfGhost; i++) {
-                var last = false;
-                if (i === noOfGhost - 1) {
-                    last = true;
-                }
-                if (i === 0) {
-                    window.heartbeat.play();
-
-                }
-                TweenLite.to(ghost[i], time / 1000, {
-                    left: ele.getRealX() * ele.xscale() + "vw",
-                    top: ele.getRealY() + "vw",
-                    width: ele.w * ele.xscale() + "vw",
-                    height: ele.h * ele.xscale() + "vw",
-                    ease: gsEasing(easeOut),
-                    onComplete: function () {
-                        if (last) {
-                            for (var ii = 0; ii < noOfGhost; ii++) {
-                                var isLast = false;
-                                if (ii === noOfGhost - 1) {
-                                    isLast = true;
-                                }
-                                $("#vn-screen").css("transition", "0.25s filter ease-in");
-                                $("#vn-screen").css("filter", "brightness(200%)");
-                                TweenLite.to(ghost[ii], out / 1000, {
-                                    left: xx[ii] * ele.xscale() + "vw",
-                                    top: yy[ii] + "vw",
-                                    width: ww[ii] * ele.xscale() + "vw",
-                                    height: hh[ii] * ele.xscale() + "vw",
-                                    ease: gsEasing(easeOut),
-                                    onComplete: function () {
-                                        if (isLast) {
-                                            window.heartbeat.stop();
-                                            $("#vn-screen").css("transition", "0.2s filter ease-out").promise().done(function () {
-                                                $("#vn-screen").css("filter", "brightness(100%)");
-                                            });
-                                            ele.stage.selfReapplyFilterCSS();
-                                            for (var i = 0; i < cArr.length; i++) {
-                                                cArr[i].reapplyFilterCSS();
-                                            }
-                                            for (var i2 = 0; i2 < noOfGhost; i2++) {
-                                                if (i2 === noOfGhost - 1) {
-                                                    ghost[i2].css("display", "none").promise().done(function () {
-                                                        $("#vn-screen").css("filter", "brightness(100%)");
-                                                        TweenLite.to(ghost[i2], 0.2, {onComplete: function () {
-                                                                if (promise !== null && typeof promise === "function") {
-                                                                    promise();
-                                                                }
-                                                            }});
-
-                                                    });
-                                                } else {
-                                                    ghost[i2].css("display", "none");
-                                                }
-                                            }
-
-                                        }
-                                    }
-                                });
-
-                            }
-                        }
-                    }
-
-                });
-
-            }
-        });
-
-
     }
 
     triggered(time, promise, skip, shake, delay) {
@@ -1528,55 +1506,43 @@ class Character {
         }
         var custom = false;
         if (image !== null && typeof image !== "undefined") {
-            image = dir + "images/char/" + this.spriteArray[image];
+            image = this.getSpritePath(image);
             custom = true;
         }
-        var src = this.getDiv().children("img").attr("src");
-        this.getDiv().children(".glitch__img").each(function (e) {
-            $(this).css("background-image", "url('" + src + "')");
-            if (custom) {
-                $(this).css("background-image", "url('" + image + "')");
-            }
 
+        var src = this.getCurrentImage();
+        if (typeof src !== "string") {
+            src = "";
+        }
+        this.getDiv().children(".glitch__img").each(function (e) {
+            jom.changeImg($(this).children("img"), custom ? image : src);
             $(this).css("opacity", "1");
             $(this).css("animation-duration", "4s");
             $(this).css("animation-delay", "0s");
             $(this).css("animation-timing-function", "linear");
             $(this).css("animation-iteration-count", "infinite");
             if (e === 1) {
-                $(this).css("background-color", "var(--blend-color-2)");
-                $(this).css("background-blend-mode", "var(--blend-mode-2)");
                 $(this).css("animation-name", "glitch-anim-1-2");
             }
             if (e === 2) {
-                $(this).css("background-color", "var(--blend-color-3)");
-                $(this).css("background-blend-mode", "var(--blend-mode-3)");
                 $(this).css("animation-name", "glitch-anim-2-2");
             } else if (e === 3) {
-                $(this).css("background-color", "var(--blend-color-4)");
-                $(this).css("background-blend-mode", "var(--blend-mode-4)");
                 $(this).css("animation-name", "glitch-anim-3-2");
             } else if (e === 4) {
-                $(this).css("background-color", "var(--blend-color-5)");
-                $(this).css("background-blend-mode", "var(--blend-mode-5)");
                 $(this).css("animation-name", "glitch-anim-flash");
             }
         });
         if (!custom) {
             var ele = this;
-
             this.gloop = setInterval(function () {
                 //console.log("trying to edit image");
-                var nsrc = dir + "images/char/" + ele.currentImage;
-
-                ele.getDiv().children(".imgchar").each(function () {
-                    if ($(this).css("visibility") !== "hidden") {
-                        nsrc = $(this).attr('src');
-                    }
-                });
-                ele.getDiv().children(".glitch__img").each(function (e) {
+                var nsrc = ele.getCurrentImage();
+                if (typeof nsrc !== "string") {
+                    nsrc = "";
+                }
+                ele.getDiv().children(".glitch__img").each(function () {
                     //console.log("editing image");
-                    $(this).css("background-image", "url('" + nsrc + "')");
+                    jom.changeImg($(this).children("img"), nsrc);
                 });
             }, 3000);
         }
@@ -1654,8 +1620,7 @@ class Character {
         }
     }
 
-    stopCycle(time, promise, swing, skip) {
-        this.name = this.cyName;
+    backFromCycle(){
         this.spriteArray = clone(this.cyspriteArray);
         this.w = this.cyW;
         this.h = this.cyH;
@@ -1679,6 +1644,11 @@ class Character {
         this.vgrayscale = this.cygrayscale;
         this.vinvert = this.cyinvert;
         this.vsepia = this.cysepia;
+    }
+
+    stopCycle(time, promise, swing, skip) {
+        this.name = this.cyName;
+        
         this.cycleseq = null;
         //cut animations
         var id = "#" + this.id;
@@ -1686,17 +1656,29 @@ class Character {
         var ghost1 = "#ghost-" + 1 + "-" + this.id;
         var ghost2 = "#ghost-" + 2 + "-" + this.id;
         var ghost3 = "#ghost-" + 3 + "-" + this.id;
+
         var animations = TweenLite.getTweensOf([id, ghost0, ghost1, ghost2, ghost3]);
+
+        this.break = true;
+
+        var char = this;
+
+        var p = function () {
+            if (typeof promise === "function") {
+                promise();
+            }
+            char.isCycling = false;
+        };
+
+        this.breakProm = function () {
+            char.backFromCycle();
+            char.animate(time, p, swing, skip);
+        };
         for (var i = 0; i < animations.length; i++) {
             animations[i].progress(1);
         }
 
-        var promise = function () {
-            promise();
-            this.cycle = false;
-        };
 
-        this.animate(time, promise, swing, skip);
     }
 
     //debug
