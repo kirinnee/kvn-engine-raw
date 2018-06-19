@@ -169,6 +169,9 @@ class Stage {
 
         this.completed = false;
 
+        //hidden
+        this.previousCharacter = null;
+
     }
     //x y calculations
     getProjectedX(x, w, ori) {
@@ -357,7 +360,7 @@ class Stage {
                     k = k.trim();
                     var bkgd = s.getBackgroundPath(k);
                     var uuid = s.getBackgroundID(k);
-                    var img = jom.img(bkgd, uuid,"bkgd-sprite-kvn");
+                    var img = jom.img(bkgd, uuid, "bkgd-sprite-kvn");
                     if (k === "def") {
                         img.css('visibility', 'visible');
                     }
@@ -398,6 +401,8 @@ class Stage {
     //globals
     display(bkgdAlpha, bkdpAlpha, time, promise, swing, skippable) {
         var s = this;
+        bkgdAlpha = this.sanitizeInput("number", bkgdAlpha, 1, 1, "time", "unDsiplay");
+        bkdpAlpha = this.sanitizeInput("number", bkdpAlpha, 1, 1, "time", "unDsiplay");
         if (window.activeStage !== null) {
             window.activeStage.unDisplay(time, promise, swing, skippable, false, this, bkgdAlpha, bkdpAlpha);
 
@@ -542,6 +547,8 @@ class Stage {
         this.finalFilter = "";
 
         this.animatingSound = new Array();
+
+        this.previousCharacter = null;
 
         this.fix();
 
@@ -1065,7 +1072,7 @@ class Stage {
         if (!this.isActive) {
             displayError("Unsupported Exception: stage cannot call .animate if its not active: Stage id: " + this.id);
         }
-        skippable = this.sanitizeInput("boolean", skippable, this.dSkip, true, "skippable", "wait");
+        skippable = this.sanitizeInput("boolean", skippable, false, this.dSkip, "skippable", "wait");
         time = this.sanitizeInput("number", time, 0, 1000, "time", "wait");
         if (typeof time !== "number" || time < 0) {
             this.typeError("Animation 'time' parameter has to be a positive number ", time);
@@ -1176,7 +1183,7 @@ class Stage {
         this.animate(time, promise, swing, skip);
     }
 
-    rotateBackgroundAnticlockwise(angle, time, promise, swing, skip) {
+    rotateBackgroundAntiClockwise(angle, time, promise, swing, skip) {
         this.preRotate(-angle);
         this.animate(time, promise, swing, skip);
     }

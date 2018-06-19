@@ -352,8 +352,7 @@ function updateSave(id, subid) {
 function playScene(id, subid) {
     if (catchNativeError) {
         try {
-            backlog = "";
-            closeBacklog();
+            
 
 
             if (subid === null || typeof subid === "undefined") {
@@ -362,6 +361,10 @@ function playScene(id, subid) {
             if (scenes[id] === null || typeof scenes[id] === "undefined") {
                 displayError("Null Exception: Scene id does not exist: " + id);
             }
+            
+            backlog = "";
+            closeBacklog();
+            
             //console.log("playingScene");
             for (var stage in stages) {
                 stages[stage].resetValues();

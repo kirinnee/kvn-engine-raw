@@ -36,6 +36,32 @@ class Scene {
         this.fArray[0].start();
     }
 
+    playFromFrame(frame) {
+
+        if (frame > this.fArray.length) {
+            displayError("Index out of Bound: ID for frame </i>" + id + "</i> doesn't exist in scene <i>" + this.id + "</i>");
+        }
+        for (var i = 0; i <= frame - 1; i++) {
+            this.current = i;
+            this.fArray[i].start(true);
+            this.fArray[i].proceed(true);
+            if (isOption) {
+                var op = this.fArray[i].callBackOption();
+                if (op !== null) {
+                    if (op.executeCallback() === true) {
+                        return;
+                    }
+                }
+                $("#optionholder").css("display", "none");
+                $(".option").remove();
+                isOption = false;
+            }
+
+        }
+        this.current = frame;
+        this.fArray[frame].start();
+    }
+
     hasCurrentFrameEnded() {
         if (this.current > this.fArray.length) {
             displayError("Index out of Bound: ID for frame </i>" + id + "</i> doesn't exist in scene <i>" + this.id + "</i>");
@@ -82,32 +108,6 @@ class Scene {
             this.fArray[this.current].start();
         }
 
-    }
-
-    playFromFrame(frame) {
-
-        if (frame > this.fArray.length) {
-            displayError("Index out of Bound: ID for frame </i>" + id + "</i> doesn't exist in scene <i>" + this.id + "</i>");
-        }
-        for (var i = 0; i <= frame - 1; i++) {
-            this.current = i;
-            this.fArray[i].start(true);
-            this.fArray[i].proceed(true);
-            if (isOption) {
-                var op = this.fArray[i].callBackOption();
-                if (op !== null) {
-                    if (op.executeCallback() === true) {
-                        return;
-                    }
-                }
-                $("#optionholder").css("display", "none");
-                $(".option").remove();
-                isOption = false;
-            }
-
-        }
-        this.current = frame;
-        this.fArray[frame].start();
     }
 
     onClick() {

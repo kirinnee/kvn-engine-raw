@@ -62,7 +62,7 @@ let policescene2 = new Scene("brostika_constable_2",
                     })
 
                     , new Frame(function () { //frame 2
-                        preSpeak(broski, function () {
+                        broski.preSpeak(function () {
                             broski.speak("Yusie, thank you for dispatching this group of helpful people to free me.", function () {
                                 yusie.changeName("Yusie");
                                 broski.wait(200, function () {
@@ -70,47 +70,52 @@ let policescene2 = new Scene("brostika_constable_2",
                                 }, false);
                             });
                         });
-                    }), new Frame(function () { //frame 3
-                broski.scale(null, null, 200, function () {
-                    preSpeak(yusie, function () {
-                        yusie.speak("Actually...", function () {
-                            yusie.wait(400, function () {
-                                yusie.contSpeaking("I didn't trust them when they reported the incident to me.", function () {
-                                    yusie.wait(200, function () {
-                                        yusie.contSpeaking("I merely told them to get you to inform me about the situation of your winery in person.")
-                                    }, false);
-                                });
-                            }, false);
+                    })
+                    , new Frame(function () { //frame 3
+                        yusie.endSpeak(function () {
+                            yusie.speak("Actually...", function () {
+                                yusie.wait(400, function () {
+                                    yusie.contSpeaking("I didn't trust them when they reported the incident to me.", function () {
+                                        yusie.wait(200, function () {
+                                            yusie.contSpeaking("I merely told them to get you to inform me about the situation of your winery in person.")
+                                        }, false);
+                                    });
+                                }, false);
+                            });
                         });
-                    });
-                });
-            }), new Frame(function () { //frame 4
-                yusie.speak("I am so sorry, -", function () {
-                    yusie.wait(300, function () {
-                        yusie.speak("What are your names again?")
-                    }, false);
-                })
-            }), new Frame(function () { //frame 5
-                yusie.scale(null, null, 200, function () {
-                    preSpeak(sophie, function () {
-                        sophie.speak("I am Sophie and they are Charles and " + playName, function () {
-                            sophie.wait(200, function () {
-                                sophie.contSpeaking("And don't worry about what happened earlier.", function () {
-                                    sophie.wait(200, function () {
-                                        sophie.contSpeaking("You were merely doing your job.");
-                                    }, false);
-                                })
+
+                    })
+
+                    , new Frame(function () { //frame 4
+                        yusie.speak("I am so sorry, -", function () {
+                            yusie.wait(300, function () {
+                                yusie.speak("What are your names again?");
                             }, false);
                         });
                     })
-                });
-            }), new Frame(function () { // frame 6
-                sophie.scale(null, null, 200, function () {
-                    preSpeak(broski, function () {
-                        broski.speak("Yusie, now that we've confirmed the matter, you should take your men to arrest the Revolutionists.");
+
+                    , new Frame(function () { //frame 5
+
+                        sophie.preSpeak(function () {
+                            sophie.speak("I am Sophie and they are Charles and " + playName, function () {
+                                sophie.wait(200, function () {
+                                    sophie.contSpeaking("And don't worry about what happened earlier.", function () {
+                                        sophie.wait(200, function () {
+                                            sophie.contSpeaking("You were merely doing your job.");
+                                        }, false);
+                                    })
+                                }, false);
+                            });
+                        })
+
                     })
-                })
-            }), new Frame(function () { //frame 7
+                    , new Frame(function () { // frame 6
+
+                        broski.preSpeak(function () {
+                            broski.speak("Yusie, now that we've confirmed the matter, you should take your men to arrest the Revolutionists.");
+                        })
+
+                    }), new Frame(function () { //frame 7
                 broski.scale(null, null, 200, function () {
                     preSpeak(yusie, function () {
                         yusie.speak("Of course!", function () {
@@ -188,19 +193,17 @@ let policescene2 = new Scene("brostika_constable_2",
                     })
 
                     , new Frame(function () { //frame 16
-                        broski.scale(null, null, 200, function () {
-                            preSpeak(charles, function () {
-                                charles.speak("No problem. If you would excuse us now, we have to-", function () {
-                                    charles.wait(200, function () {
-                                        charles.scale(null, null, 200, function () {
-                                            preSpeak(broski, function () {
-                                                broski.speak("I believe I haven't introduced myself yet.")
-                                            });
-                                        })
-                                    }, false);
-                                });
+                        charles.preSpeak(function () {
+                            charles.speak("No problem. If you would excuse us now, we have to-", function () {
+                                charles.wait(200, function () {
+                                    charles.scale(null, null, 200, function () {
+                                        preSpeak(broski, function () {
+                                            broski.speak("I believe I haven't introduced myself yet.")
+                                        });
+                                    })
+                                }, false);
                             });
-                        })
+                        });
                     })
 
                     , new Frame(function () { //frame 17

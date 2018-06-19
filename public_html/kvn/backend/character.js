@@ -1199,7 +1199,7 @@ class Character {
         this.animate(time, promise, swing, skippable);
     }
 
-    moveVerticalAlign(valign, time, promise, swing, adjust, skippable) {
+    moveVerticalAlign(valign, time, promise, swing, skippable, adjust) {
         valign = this.sanitizeInput("number", valign, this.dyA, 0, "valign", "moveVerticalAlign");
         adjust = this.sanitizeInput("boolean", adjust, true, true, "adjust", "moveVerticalAlign");
 
@@ -1216,7 +1216,7 @@ class Character {
         this.animate(time, promise, swing, skippable);
     }
 
-    moveHorizontalAlign(halign, time, promise, swing, adjust, skippable) {
+    moveHorizontalAlign(halign, time, promise, swing,  skippable, adjust) {
         halign = this.sanitizeInput("number", halign, this.dyA, 0, "halign", "moveHorizontalAlign");
         adjust = this.sanitizeInput("boolean", adjust, true, true, "adjust", "moveHorizontalAlign");
 
@@ -1298,7 +1298,7 @@ class Character {
         }
 
         time = this.sanitizeInput("number", time, 0, 500, "time", "wait");
-        skippable = this.sanitizeInput("boolean", skippable, this.dSkip, true, " skippable", "wait");
+        skippable = this.sanitizeInput("boolean", skippable, false, this.dSkip, " skippable", "wait");
 
         if (time < 0) {
             this.throwError("Negative Time Exception: Time for appearing animation has to be positive. Entered value: " + time);
