@@ -1096,6 +1096,16 @@ class Stage {
         });
     }
 
+    fadeOutBackground(time,promise,swing,skippable){
+        this.setOpacity(0);
+        this.animate(time,promise,swing,skippable);
+    }
+    
+    fadeInBackground(time,promise,swing,skippable){
+        this.setOpacity(1);
+        this.animate(time,promise,swing,skippable);
+    }
+
     changeCover(opacity, color, time, promise, swing, skippable) {
         this.setCoverOpacity(opacity);
         this.setCoverColor(color);
