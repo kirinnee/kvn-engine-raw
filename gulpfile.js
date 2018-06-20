@@ -10,7 +10,7 @@ const babel = require('gulp-babel');
 const del = require('del'); 
 
 gulp.task('clean',function(){
-   return del(['patch', 'export'])
+   return del(['patch', 'export']);
 });
 
 gulp.task('export1', function () {

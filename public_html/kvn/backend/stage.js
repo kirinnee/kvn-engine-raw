@@ -370,8 +370,6 @@ class Stage {
             }
         });
 
-        Promise.all(pArr)
-                .then(function () {
                     s.animate(0, function () {
                         s.setOpacity(backgroundOpacity);
                         s.setBackdropOpacity(backdropOpacity);
@@ -379,7 +377,6 @@ class Stage {
                         s.setCharArray(s.charArray);
                     }, swing, skippable);
 
-                });
     }
 
     getImageDirectory() {
