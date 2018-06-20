@@ -12,6 +12,8 @@ var scripts =
 ,"brostika_constable_2.js"
 ];
 
+var displaySpriteName = false;
+
 //allow for fullscreen
 var hasFullScreenOption = true;
 //alert for mobile users to use full screen
