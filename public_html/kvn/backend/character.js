@@ -1588,6 +1588,8 @@ class Character {
         var prev = this.stage.previousCharacter;
         var char = this;
         timing = this.sanitizeInput("number", timing, this.preSpeakTime, 200, "time", "endSpeak");
+        skip = this.sanitizeInput("boolean", skip, this.dSkip, true, " skippable", "animate");
+        swing = this.sanitizeInput("object", swing, this.dGraph, linear, "graph", "animate");
         if (prev !== null && typeof prev !== "undefined") {
             prev.scale(null, null, 200, function () {
                 char.stage.previousCharacter = null;
