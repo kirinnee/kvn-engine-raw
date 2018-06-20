@@ -1574,7 +1574,17 @@ class Character {
         }
     }
 
-    endSpeak(promise, timing) {
+    interupt(promise, scale, timing, swing, skip){
+        var prev = this.stage.previousCharacter;
+        this.stage.previousCharacter = null;
+        if(typeof prev !== "undefined" && prev !== null ){
+            prev.scale(null,null, timing,swing,skip);
+        }
+        this.preSpeak(promise,scale,timing,swing, skip);
+        
+    }
+
+    endSpeak(promise, timing, swing,skip) {
         var prev = this.stage.previousCharacter;
         var char = this;
         timing = this.sanitizeInput("number", timing, this.preSpeakTime, 200, "time", "endSpeak");
@@ -1588,14 +1598,15 @@ class Character {
                         char.typeError("Promise has to be a function! ", promise);
                     }
                 }
-            });
+            },swing,skip);
         }
     }
 
-    preSpeak(promise, scale, timing) {
+    preSpeak(promise, scale, timing, swing, skip) {
         scale = this.sanitizeInput("number", scale, this.preSpeakScale, 1.05, "scale", "preSpeak");
         timing = this.sanitizeInput("number", timing, this.preSpeakTime, 200, "time", "preSpeak");
-
+        skip = this.sanitizeInput("boolean", skip, this.dSkip, true, " skippable", "animate");
+        swing = this.sanitizeInput("object", swing, this.dGraph, linear, "graph", "animate");
 
         var prev = this.stage.previousCharacter;
         var char = this;
@@ -1613,13 +1624,13 @@ class Character {
                         }
                     }
                 });
-            });
+            },swing,skip);
         };
 
         if (prev !== null && typeof prev !== "undefined") {
             prev.scale(null, null, timing, function () {
                 p();
-            });
+            },swing,skip);
         } else {
             p();
         }
