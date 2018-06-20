@@ -20,6 +20,10 @@
         
 }
 
+#actual-text .knv-th-ele{
+    display:inline;
+}
+
 .fkshits{
     height: 50vw;
 }

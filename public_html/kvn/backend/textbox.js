@@ -231,13 +231,14 @@ class Textbox {
         }
     }
 
-    displayText(text, promise, time, clear) {
+    displayText(text, promise, time, clear, nl, appendSpace) {
         if (!this.animating) {
             //clean input
             time = this.sanitizeInput("number", time, null, "time", "displayText in text engine", true);
             clear = this.sanitizeInput("boolean", clear, true, "clear", "displayText in text engine");
-            text = this.sanitizeInput("string", text, "If you see this text, you probably fucked up! :> - Kirinnee", "displayText in text engine");
-
+            text = this.sanitizeInput("string", text, "Null is not an accepted argument for speaking - Kirinnee", "displayText in text engine");
+            nl = this.sanitizeInput('boolean',nl,false,"displayText in text engine");
+            appendSpace = this.sanitizeInput('boolean',appendSpace,true,'displayText in text engine');
             //increment
             this.count++;
 
@@ -296,7 +297,7 @@ class Textbox {
             //add the newest element in!
             dEle.append("<span class='knv-th-ele " + cls + "' id='" + uid + "' style='font-size:" + tb.getFontSize() + ";color:" + this.color + ";' ofs='"+tb.getOFontSize()+"'></span>");
 
-            $("#" + uid).append(this.formatForReveal(text));
+            $("#" + uid).append(this.formatForReveal(text,clear,nl,appendSpace));
 
             this.end = function () {
                 clearInterval(tb.cLoop);
@@ -328,8 +329,9 @@ class Textbox {
         }
     }
 
-    formatForReveal(string) {
-        string += " ";
+    formatForReveal(string,clear,nl,append) {
+        if (!clear && append) string = " "+string;
+        
         var ret = "<span class='word'>";
         for (var i = 0; i < string.length; i++) {
             var char = string.charAt(i);
@@ -340,6 +342,7 @@ class Textbox {
             }
         }
         ret + "</span>";
+        if (nl) ret = "<br>" + ret;
         return ret;
     }
 

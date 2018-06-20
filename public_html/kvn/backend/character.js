@@ -1076,7 +1076,7 @@ class Character {
 
     //Animations
 
-    speak(text, promise, time, skip, pw, bool) {
+    speak(text, promise, time, skip, pw, bool,nl,append) {
         if (!this.completed) {
             this.throwError("Incomplete Object Construction Exception: Character object not completed in construction. " +
                     "Please call chain-able method '.complete()' to complete construction.");
@@ -1101,7 +1101,7 @@ class Character {
             tb.setUnskippable();
         }
 
-        var sent = tb.displayText(text, promise, time, bool);
+        var sent = tb.displayText(text, promise, time, bool,nl, append);
 
         //console.log(backlog);
         if (sent) {
@@ -1117,8 +1117,8 @@ class Character {
 
     }
 
-    contSpeaking(text, promise, time, skip) {
-        return this.speak(text, promise, time, skip, "hehehe", false);
+    contSpeaking(text, promise, time, skip, nl, append) {
+        return this.speak(text, promise, time, skip, "hehehe", false,nl,append);
     }
 
     setDefaultFlip(promise, time, graph, skip) {

@@ -252,6 +252,14 @@ function bringBackLayers() {
     $(".glitch__img").css("display", "block");
 }
 
+function debugText(){
+   $("#overlay").css("display", "none");
+    //$("#postoverlay").css("display", "none");
+    $("#clickbox").css("display", "none");
+    $("#hclickbox").css("display", "none");
+    $(".glitch__img").css("display", "none");
+}
+
 function getSceneByID(id) {
     return scenes[id];
 }
