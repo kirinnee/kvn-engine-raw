@@ -479,6 +479,9 @@ class Character {
 
         TweenLite.to(this.getDiv(), 0, {scaleX: scaleX, scaleY: scaleY, skewX: skewX, skewY: skewY, rotation: rotate});
 
+        if(displaySpriteName){
+            TweenLite.to("#"+this.genDebugSpriteID(),0,{scaleX:scaleX});
+        }
 
         //glitching stuff
         var src = this.getCurrentImage();
@@ -497,6 +500,7 @@ class Character {
 
     generateDOM() {
         var parent = jom.div(['character', 'gameobj'], this.getID());
+        
         var sprites = this.spriteArray;
         for (var k in sprites) {
             if (jom.string(k)) {
@@ -527,7 +531,13 @@ class Character {
             }
             parent.append(g);
         }
+        var text = jom.div('sprite-name-debug',this.genDebugSpriteID(),this.currentSprite).css('display',displaySpriteName?"block":"none");
+        parent.append(text);
         return parent;
+    }
+
+    genDebugSpriteID(){
+        return this.getID()+"sprite-debug-display-name";
     }
 
     reapplyFilterCSS() {
@@ -988,6 +998,7 @@ class Character {
         this.getDiv().children(".charimg").css("visibility", "hidden").promise().done(function () {
             var kID = "#" + char.getSpriteID(name);
             char.getDiv().children(kID).css("visibility", "visible").promise().done(function () {
+                $("#"+char.genDebugSpriteID()).html(name);
                 if (promise !== null & typeof promise !== "undefined") {
                     if (typeof promise === "function") {
                         promise();
@@ -1381,6 +1392,9 @@ class Character {
         var skewY = this.vskewy + "deg";
         var rotate = this.vrotate + "deg";
 
+        if(displaySpriteName){
+            TweenLite.to("#"+this.genDebugSpriteID(),0,{scaleX:scaleX});
+        }
 
         var char = this;
 

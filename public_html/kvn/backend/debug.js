@@ -277,13 +277,19 @@ $(document).on("click", ".char-log-editting", function () {
                     pauseEngine();
                     $(this).html("done");
                     cutDownLayers();
+                    $("#canvas").css("overflow", "visible");
+                    $("#kvn").css("overflow", "visible");
+                    $("#the-rest-of-the-game").css("overflow", "visible");
+                    $("#kirinnee-visual-novel-engine").css("overflow", "visible");
                     $("#debugger").css("display", "none");
                     $("#" + charID).draggable({
                         classes: {
                             "ui-draggable": "highlight"
                         }
                     });
-                    $("#" + charID).resizable();
+                    $("#" + charID).resizable({
+                        handles: "n, e, s, w, ne, se, sw, nw"
+                    });
 
                     var id = "#kvn-char-logger-for-" + charID;
                     $(id).children(".table").children("table").children("tbody").children("tr").children(".old").each(function () {
@@ -300,6 +306,7 @@ $(document).on("click", ".char-log-editting", function () {
                 } else {
                     $(this).html("edit");
                     bringBackLayers();
+                    $("#canvas", "#kvn", "#the-rest-of-the-game", "#kirinnee-visual-novel-engine").css("overflow", "hidden");
                     $("#debugger").css("display", "inline-block");
                     $("#" + charID).resizable("destroy");
                     $("#" + charID).draggable("destroy");
@@ -324,7 +331,8 @@ $(document).on("click", ".char-log-editting", function () {
                     var width = parseInt($("#" + charID).css("width")) * onePx;
                     var height = parseInt($("#" + charID).css("height")) * onePx;
 
-                    var xScale = cha.xscale;
+                    console.log(left, top, width, height);
+                    var xScale = cha.xscale();
 
                     //find w
                     var w = width / xScale;
@@ -341,9 +349,11 @@ $(document).on("click", ".char-log-editting", function () {
                     //finding y
                     var aY = cha.anchorY;
                     var yAlign = cha.yAlign;
-                    var yScale = cha.yscale;
+                    var yScale = cha.yscale();
                     var hm = heightMultiplier;
                     var vnW = vnScreenWidth;
+
+
 
                     var y = top / yScale + (aY * h - yAlign * hm * vnW) / (100 * yScale);
 
@@ -374,8 +384,7 @@ $(document).on("change", ".kvn-edit", function () {
         if (c !== null && typeof c !== "undefined" && currentScene !== null &&
                 typeof currentScene !== "undefined" && activeStage !== null) {
             c[index] = v;
-            activeStage.applyCharacterCSS(c);
-            //c.animate(0);
+            c.apply();
         }
     }
 });
@@ -430,11 +439,11 @@ $(document).on('click', "#toggle-debug-edit", function () {
 $(document).on('click', "#c-bg", function () {
     var file = $("#bgchange")[0].files[0];
     var reader = new FileReader();
-        
-    
+
+
     reader.onloadend = function () {
         console.log("fuk");
-        
+
         if (activeStage !== null && typeof activeStage !== "undefined") {
             activeStage.instantChangeBG(reader.result);
         }

@@ -60,6 +60,7 @@ $(document).ready(function () {
 
         $("#canvas").css("marginTop", -overflow + "px");
         $("#backlog").css("top", overflow + "px");
+        $("#debugger").css("margin-top",overflow + "px");
     }
 
     setInterval(function () {
@@ -149,8 +150,10 @@ $(window).resize(function () {
          overflow = 0;
          }
          */
+        console.log(overflow);
         $("#kirinnee-visual-novel-engine").css("top", overflow + "px");
         $(".toggle-fs").css("top", -overflow + "px");
+        $("#debugger").css("margin-top",-overflow + "px");
     }
 });
 

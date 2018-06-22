@@ -20,6 +20,18 @@
         
 }
 
+.sprite-name-debug{
+    position:absolute;
+    top:15%;
+    left:50%;
+    display:inline-block;
+    transform:translate(-50%,-50%);
+    font-size: 4vw;
+    color: red;
+    text-shadow: 0px 0px 5px black;
+    display:none;
+}
+
 #actual-text .knv-th-ele{
     display:inline;
 }

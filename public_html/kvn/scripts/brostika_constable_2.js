@@ -8,9 +8,6 @@ let policescene2 = new Scene("brostika_constable_2",
                 brostika.bringCharacter(yusie);
                 brostika.bringCharacter(broski);
 
-                charles.preMove(-50);
-                sophie.preMove(-50);
-                broski.preMove(-100);
                 broski.setHorizontalFlip(true);
 
                 brostika.display(1, 1, 0, function () {
@@ -24,5 +21,10 @@ let policescene2 = new Scene("brostika_constable_2",
                     });
                 });
 
+            }),
+            new Frame(function(){
+              sophie.appear();
+              charles.appear();
+              broski.appear();
             })
         ]);
