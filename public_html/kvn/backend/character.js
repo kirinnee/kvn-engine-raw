@@ -979,7 +979,7 @@ class Character {
     //Instants
     changeSprite(name, promise) {
 
-        name = this.sanitizeInput("string", name, this.spriteArray['def'], this.spriteArray['def'], "name", "changeSprite");
+        name = this.sanitizeInput("string", name, "def", "default", "name", "changeSprite");
 
         if (!this.spriteArray.hasOwnProperty(name)) {
             this.throwError("Missing Sprite: The sprite '" + name + "' does not exist!");

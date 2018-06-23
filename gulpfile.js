@@ -1,4 +1,4 @@
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -7,10 +7,10 @@
 var gulp = require('gulp');
 var rename = require("gulp-rename");
 const babel = require('gulp-babel');
-const del = require('del'); 
+const del = require('del');
 
 gulp.task('clean',function(){
-   return del(['patch', 'export']);
+   return del(['patch']);
 });
 
 gulp.task('export1', function () {
@@ -22,6 +22,8 @@ gulp.task('export1', function () {
                         , '!public_html/kvn/images/char/**/*.*'
                         , '!public_html/kvn/scripts/**/*.*'
                         , '!public_html/kvn/sound/**/*.*'
+                        , '!public_html/kvn/config.js'
+                        , '!public_html/kvn/config_def.js'
             ])
             .pipe(gulp.dest(['export']));
 });
@@ -50,14 +52,25 @@ gulp.task('export2', function () {
             resolve();
         });;
     });
+    var e = new Promise(function(resolve){
+        gulp.src(['public_html/kvn/config_def.js'])
+            .pipe(rename(function (path) {
+                path.basename = "config";
+            }))
+            .pipe(gulp.dest(['export/kvn/'])).on('end', function () {
+            resolve();
+        });;
+    });
     var d = new Promise(function(resolve){
        gulp.src(['*.*'],{read:false})
                .pipe(gulp.dest('export/kvn/sound'))
                .pipe(gulp.dest('export/kvn/images/char'))
-               .pipe(gulp.dest('export/kvn/images/bkgd'));
+               .pipe(gulp.dest('export/kvn/images/bkgd')).on('end', function () {
+            resolve();
+        });
     });
-    
-    return Promise.all([a, b, c]);
+
+    return Promise.all([a, b, c,d,e]);
 });
 
 gulp.task('patch', function () {
@@ -88,4 +101,3 @@ gulp.task('patch', function () {
 
 
 gulp.task('default', gulp.series('clean','export1', 'export2', 'patch'));
-

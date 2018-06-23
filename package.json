@@ -1,17 +1,51 @@
 {
-    "name": "kvn",
-    "version": "1.0.0",
-    "keywords": [
-        "util",
-        "functional",
-        "server",
-        "client",
-        "browser"
-    ],
-    "author": "Ernest Ng",
-    "contributors": [],
-    "dependencies": {},
-    "devDependencies": {
-        "babel-cli": "^6.26.0"
-    }
+  "name": "kvn-engine-source",
+  "version": "0.4.6",
+  "description": "Raw KVN Engine",
+  "main": "export.bat",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kirinnee/kvn-engine-raw.git"
+  },
+  "babel": {
+    "minified": "true",
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "browsers": [
+              "last 2 versions",
+              "safari >= 7"
+            ]
+          }
+        }
+      ]
+    ]
+  },
+  "keywords": [
+    "kvn",
+    "engine",
+    "source"
+  ],
+  "author": "Kirinnee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kirinnee/kvn-engine-raw/issues"
+  },
+  "homepage": "https://github.com/kirinnee/kvn-engine-raw#readme",
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "del": "^3.0.0",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-babel": "^7.0.1",
+    "gulp-rename": "^1.3.0"
+  }
 }
