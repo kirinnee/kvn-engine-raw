@@ -60,7 +60,7 @@ $(document).ready(function () {
 
         $("#canvas").css("marginTop", -overflow + "px");
         $("#backlog").css("top", overflow + "px");
-        $("#debugger").css("margin-top",overflow + "px");
+        $("#debugger").css("margin-top", overflow + "px");
     }
 
     setInterval(function () {
@@ -153,7 +153,7 @@ $(window).resize(function () {
         console.log(overflow);
         $("#kirinnee-visual-novel-engine").css("top", overflow + "px");
         $(".toggle-fs").css("top", -overflow + "px");
-        $("#debugger").css("margin-top",-overflow + "px");
+        $("#debugger").css("margin-top", -overflow + "px");
     }
 });
 
@@ -255,8 +255,8 @@ function bringBackLayers() {
     $(".glitch__img").css("display", "block");
 }
 
-function debugText(){
-   $("#overlay").css("display", "none");
+function debugText() {
+    $("#overlay").css("display", "none");
     //$("#postoverlay").css("display", "none");
     $("#clickbox").css("display", "none");
     $("#hclickbox").css("display", "none");
@@ -363,19 +363,16 @@ function updateSave(id, subid) {
 function playScene(id, subid) {
     if (catchNativeError) {
         try {
-            
-
-
             if (subid === null || typeof subid === "undefined") {
                 subid = 0;
             }
             if (scenes[id] === null || typeof scenes[id] === "undefined") {
                 displayError("Null Exception: Scene id does not exist: " + id);
             }
-            
+
             backlog = "";
             closeBacklog();
-            
+
             //console.log("playingScene");
             for (var stage in stages) {
                 stages[stage].resetValues();
@@ -394,8 +391,8 @@ function playScene(id, subid) {
             cMarker = false;
 
             $("#centered").html("");
-            $("#top-left").html("");
-            $("#nametext").html("");
+            $("#top-left #actual-text").html("");
+            $("#name-text").html("");
 
             if (subid !== 0) {
                 currentScene = null;
@@ -427,8 +424,18 @@ function playScene(id, subid) {
         }
         for (var char in characters) {
             characters[char].resetValues();
-
         }
+        if (isOption) {
+            $("#optionholder").css("display", "none");
+            $(".option").remove();
+            isOption = false;
+        }
+
+        cMarker = false;
+        $("#centered").html("");
+        $("#top-left #actual-text").html("");
+        $("#name-text").html("");
+
 
         if (subid !== 0) {
             currentScene = null;

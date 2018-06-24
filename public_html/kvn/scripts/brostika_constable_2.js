@@ -10,12 +10,12 @@ let policescene2 = new Scene("brostika_constable_2",
 
                 broski.setHorizontalFlip(true);
 
-                brostika.display(1, 1, 0, function () {
+                brostika.display(1, 1, 1000, function () {
                     
                     sophie.speak('fuckery fuckery fuckery fuckery fuckery fuckery fuckery',function(){
                         sophie.wait(200,function(){
                            sophie.contSpeaking('yeah! yeah! yeah! yeah! yeah! yeah! yeah! yeah! yeah! yeah! yeah! yeah!',
-                            null,null,null,true,true
+                             null,null,null,true,true
                             ); 
                         });
                     });
@@ -27,4 +27,6 @@ let policescene2 = new Scene("brostika_constable_2",
               charles.appear();
               broski.appear();
             })
-        ]);
+        ],function(){
+            playScene('brostika_winery',0);
+        });

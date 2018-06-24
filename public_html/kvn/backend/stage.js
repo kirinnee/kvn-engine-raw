@@ -370,12 +370,12 @@ class Stage {
             }
         });
 
-                    s.animate(0, function () {
-                        s.setOpacity(backgroundOpacity);
-                        s.setBackdropOpacity(backdropOpacity);
-                        s.animate(time, promise, swing, skippable);
-                        s.setCharArray(s.charArray);
-                    }, swing, skippable);
+        s.animate(0, function () {
+            s.setOpacity(backgroundOpacity);
+            s.setBackdropOpacity(backdropOpacity);
+            s.animate(time, promise, swing, skippable);
+            s.setCharArray(s.charArray);
+        }, swing, skippable);
 
     }
 
@@ -396,27 +396,26 @@ class Stage {
     }
 
     //globals
-    display(bkgdAlpha, bkdpAlpha, time, promise, swing, skippable) {
+    display(bkgdAlpha, bkdpAlpha, time, promise, swing, skippable,fadeOut) {
         var s = this;
-        bkgdAlpha = this.sanitizeInput("number", bkgdAlpha, 1, 1, "time", "unDsiplay");
-        bkdpAlpha = this.sanitizeInput("number", bkdpAlpha, 1, 1, "time", "unDsiplay");
+        bkgdAlpha = this.sanitizeInput("number", bkgdAlpha, 1, 1, "backgroundOpacity", "display");
+        bkdpAlpha = this.sanitizeInput("number", bkdpAlpha, 1, 1, "backdropOpacity", "display");
+        fadeOut = this.sanitizeInput("boolean", fadeOut, true, true, "fadeOut", "display");
         if (window.activeStage !== null) {
-            window.activeStage.unDisplay(time, promise, swing, skippable, false, this, bkgdAlpha, bkdpAlpha);
+            window.activeStage.unDisplay(time, promise, swing, skippable, false, fadeOut, this, bkgdAlpha, bkdpAlpha);
 
         } else {
             this.hdisplay(bkgdAlpha, bkdpAlpha, time, promise, swing, skippable);
         }
     }
 
-    unDisplay(time, promise, swing, skippable, offBackDrop, nStage, bkgdA, bkdpA) {
+    unDisplay(time, promise, swing, skippable, offBackDrop, fadeOut, nStage, bkgdA, bkdpA) {
         if (!this.completed) {
             this.throwError("Object Construction Exception: Stage object construction not completed. Call .complete() to complete the construction of the stage.");
         }
         time = this.sanitizeInput("number", time, 0, 1000, "time", "unDsiplay");
-
-        if (offBackDrop === null || typeof offBackDrop === "undefined" || offBackDrop === def) {
-            offBackDrop = false;
-        }
+        offBackDrop = this.sanitizeInput('boolean', offBackDrop,false,false, 'offBackDrop','unDisplay');
+        fadeOut = this.sanitizeInput("boolean", fadeOut, true, true, "fadeOut", "unDisplay");
 
         if (this.isActive) {
 
@@ -430,9 +429,12 @@ class Stage {
             if (offBackDrop) {
                 this.setBackdropOpacity(0);
             }
-            this.setOverlayOpacity(0);
-            this.setOpacity(0);
-            this.setCoverOpacity(0);
+            if(fadeOut){
+                this.setOverlayOpacity(0);
+                this.setOpacity(0);
+                this.setCoverOpacity(0);
+            }
+                
             this.animate(hT, function () {
                 window.activeStage.closeTextBox(function () {
                     window.activeStage = null;
@@ -848,12 +850,6 @@ class Stage {
         }
         if (skippable === def) {
             skippable = false;
-        }
-        if (time === null || typeof time === "undefined") {
-            time = 0;
-        }
-        if (time === def) {
-            time = 1000;
         }
 
         if (!this.completed) {

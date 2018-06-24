@@ -16,14 +16,14 @@ gulp.task('clean',function(){
 gulp.task('export1', function () {
     return gulp.src(
             ['public_html/**/*.*'
-                        , '!public_html/js/**/*.*'
-                        , '!public_html/kvn/backend/**/*.*'
-                        , '!public_html/kvn/images/bkgd/**/*.*'
-                        , '!public_html/kvn/images/char/**/*.*'
-                        , '!public_html/kvn/scripts/**/*.*'
-                        , '!public_html/kvn/sound/**/*.*'
-                        , '!public_html/kvn/config.js'
-                        , '!public_html/kvn/config_def.js'
+            , '!public_html/js/**/*.*'
+            , '!public_html/kvn/backend/**/*.*'
+            , '!public_html/kvn/images/bkgd/**/*.*'
+            , '!public_html/kvn/images/char/**/*.*'
+            , '!public_html/kvn/scripts/**/*.*'
+            , '!public_html/kvn/sound/**/*.*'
+            , '!public_html/kvn/config.js'
+            , '!public_html/kvn/config_def.js'
             ])
             .pipe(gulp.dest(['export']));
 });
@@ -43,15 +43,7 @@ gulp.task('export2', function () {
             resolve();
         });;
     });
-    var c = new Promise(function(resolve){
-        gulp.src(['public_html/kvn/scripts/di.js'])
-            .pipe(rename(function (path) {
-                path.basename = "init";
-            }))
-            .pipe(gulp.dest(['export/kvn/scripts'])).on('end', function () {
-            resolve();
-        });;
-    });
+
     var e = new Promise(function(resolve){
         gulp.src(['public_html/kvn/config_def.js'])
             .pipe(rename(function (path) {
@@ -70,7 +62,7 @@ gulp.task('export2', function () {
         });
     });
 
-    return Promise.all([a, b, c,d,e]);
+    return Promise.all([a, b,d,e]);
 });
 
 gulp.task('patch', function () {
@@ -87,14 +79,14 @@ gulp.task('patch', function () {
     var b = new Promise(function (resolve) {
         gulp.src(
                 ['export/kvn/**/*.*'
-                            , '!export/kvn/images'
-                            , '!export/kvn/scripts'
-                            , '!export/kvn/sound'
-                            , '!export/kvn/config.js'])
+                , '!export/kvn/images/**/*.*'
+                , '!export/kvn/scripts/**/*.*'
+                , '!export/kvn/sound/**/*.*'
+                , '!export/kvn/config.js'])
                 .pipe(gulp.dest(['patch/kvn'])).on('end', function () {
             resolve();
         });
-    })
+    });
 
     return Promise.all([a, b]);
 });

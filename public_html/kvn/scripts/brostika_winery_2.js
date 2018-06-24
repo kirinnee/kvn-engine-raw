@@ -7,13 +7,12 @@ let wineryscene = new Scene("brostika_winery", [
     charles.preMove(-80);
     sophie.preMove(-50);
 
-    brostika.display(0, 1, 0, function() {
+    brostika.display(1, 1, 0, function() {
       brostika.setAnchorX(0);
       brostika.setAnchorY(0);
-      brostika.setWidth(150);
 
-      brostika.changeBackground("winery", 1, 800);
-    });
+      brostika.changeBackground("default", 1, 0);
+    },null,null,false);
   })
 
   , new Frame(function() { //frame 1
